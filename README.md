@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 28 real effects ([4]–[31]).
+Live UI animation templates — the 29 real effects ([4]–[32]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 28 effects play live, no build step:
+Open `gallery.html` in any browser — all 29 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -41,6 +41,7 @@ open gallery.html
 | 29 | `templates/Template-[29].txt` | TextType — typewriter with delete + loop, per-sentence colors (full impl, live in gallery) | auto-plays |
 | 30 | `templates/Template-[30].txt` | MagicRings — expanding ring shader (full impl, live WebGL2 in gallery) | move mouse · hover · click |
 | 31 | `templates/Template-[31].txt` | OrbitImages by Dominik Koch — images on SVG path orbits (full impl, live in gallery) | auto-plays |
+| 32 | `templates/Template-[32].txt` | ElectricBorder canvas — chaos-displaced electric stroke (full impl, live in gallery; cf [11]'s gradient take) | auto-plays |
 
 ## Source
 

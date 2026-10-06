@@ -183,11 +183,16 @@
   .orbit-item img { width:100%; height:100%; object-fit:cover; display:block; }
   .orbit-path-svg { position:absolute; inset:0; }
 
+  /* ── 32 ElectricBorder (canvas) ── */
+  .eb2 { position:relative; border-radius:16px; }
+  .eb2 canvas { position:absolute; left:-60px; top:-60px; pointer-events:none; }
+  .eb2-content { position:relative; background:#10151d; border-radius:16px; padding:28px 24px; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 28 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 29 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -280,6 +285,9 @@
 
 <section class="card"><h2>[31] ORBIT IMAGES</h2><p class="src">Template-[31].txt · OrbitImages by Dominik Koch — grayscale images orbiting a circular path</p>
 <div class="stage" style="width:100%"><div id="orbit" style="width:100%;max-width:440px"></div></div></section>
+
+<section class="card"><h2>[32] ELECTRIC BORDER · CANVAS</h2><p class="src">Template-[32].txt · ElectricBorder — chaotic electric stroke on canvas (vs [11]'s conic-gradient edge)</p>
+<div class="stage"><div class="eb2" id="eborder2"><div class="eb2-content"><div>A glowing, animated border wrapper.</div><p style="margin:6px 0 0;opacity:.8">color #7df9ff · chaos 0.12 · noise stroke</p></div></div></section>
 
 </div>
 <script>
@@ -1750,6 +1758,92 @@ function OrbitImages(el, o) {
     shape: 'circle', radius: 520, rotation: 0, duration: 45, itemSize: 64,
     direction: 'normal', fill: true, showPath: true, paused: false
   });
+})();
+// ElectricBorder core, vanilla port (full React source: templates/Template-[32].txt)
+function ElectricBorder(el, o) {
+  o = Object.assign({ color: '#5227FF', speed: 1, chaos: 0.12, thickness: 2, borderRadius: 24 }, o || {});
+  const rnd = x => (Math.sin(x * 12.9898) * 43758.5453) % 1;
+  function noise2D(x, y) {
+    const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j;
+    const a = rnd(i + j * 57), b = rnd(i + 1 + j * 57), c = rnd(i + (j + 1) * 57), d = rnd(i + 1 + (j + 1) * 57);
+    const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
+    return a * (1 - ux) * (1 - uy) + b * ux * (1 - uy) + c * (1 - ux) * uy + d * ux * uy;
+  }
+  function octaves(x, time, seed) {
+    let y = 0, amp = o.chaos, freq = 10;
+    for (let i = 0; i < 10; i++) {
+      y += (i === 0 ? 0 : amp) * noise2D(freq * x + seed * 100, time * freq * 0.3);
+      freq *= 1.6; amp *= 0.7;
+    }
+    return y;
+  }
+  function corner(cx, cy, r, a0, arc, p) {
+    const a = a0 + p * arc;
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  }
+  function rrPoint(t, left, top, w, h, radius) {
+    const sw = w - 2 * radius, sh = h - 2 * radius, ca = Math.PI * radius / 2;
+    const total = 2 * sw + 2 * sh + 4 * ca;
+    let d = t * total, acc = 0;
+    if (d <= acc + sw) return { x: left + radius + (d - acc) / sw * sw, y: top };
+    acc += sw;
+    if (d <= acc + ca) return corner(left + w - radius, top + radius, radius, -Math.PI / 2, Math.PI / 2, (d - acc) / ca);
+    acc += ca;
+    if (d <= acc + sh) return { x: left + w, y: top + radius + (d - acc) / sh * sh };
+    acc += sh;
+    if (d <= acc + ca) return corner(left + w - radius, top + h - radius, radius, 0, Math.PI / 2, (d - acc) / ca);
+    acc += ca;
+    if (d <= acc + sw) return { x: left + w - radius - (d - acc) / sw * sw, y: top + h };
+    acc += sw;
+    if (d <= acc + ca) return corner(left + radius, top + h - radius, radius, Math.PI / 2, Math.PI / 2, (d - acc) / ca);
+    acc += ca;
+    if (d <= acc + sh) return { x: left, y: top + h - radius - (d - acc) / sh * sh };
+    acc += sh;
+    return corner(left + radius, top + radius, radius, Math.PI, Math.PI / 2, (d - acc) / ca);
+  }
+  const canvas = document.createElement('canvas');
+  el.insertBefore(canvas, el.firstChild);
+  const ctx = canvas.getContext('2d');
+  const OFF = 60;
+  let W = 0, H = 0, t = 0, last = performance.now();
+  function size() {
+    const r = el.getBoundingClientRect();
+    W = r.width + OFF * 2; H = r.height + OFF * 2;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    return dpr;
+  }
+  let dpr = size();
+  new ResizeObserver(() => { dpr = size(); }).observe(el);
+  (function draw(now) {
+    t += (now - last) / 1000 * o.speed;
+    last = now;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.scale(dpr, dpr);
+    ctx.strokeStyle = o.color;
+    ctx.lineWidth = o.thickness;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.shadowColor = o.color; ctx.shadowBlur = 12;
+    const bw = W - OFF * 2, bh = H - OFF * 2;
+    const radius = Math.min(o.borderRadius, Math.min(bw, bh) / 2);
+    const n = Math.floor((2 * (bw + bh) + 2 * Math.PI * radius) / 2);
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const p = i / n;
+      const pt = rrPoint(p, OFF, OFF, bw, bh, radius);
+      const xn = octaves(p * 8, t, 0), yn = octaves(p * 8, t, 1);
+      const X = pt.x + xn * 60, Y = pt.y + yn * 60;
+      i === 0 ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+    requestAnimationFrame(draw);
+  })(last);
+}
+(() => { const host = document.getElementById('eborder2'); if (!host) return;
+  ElectricBorder(host, { color: '#7df9ff', speed: 1, chaos: 0.12, thickness: 2, borderRadius: 16 });
 })();
 </script>
 </body>
