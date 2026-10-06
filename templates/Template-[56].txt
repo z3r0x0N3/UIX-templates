@@ -1,0 +1,39 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import './BatteryCharge.css';
+
+const BatteryCharge = ({ capacity = 100 }) => {
+  const [level, setLevel] = useState(12);
+  const [charging, setCharging] = useState(true);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setLevel(v => {
+        if (v >= capacity) {
+          setCharging(false);
+          return capacity;
+        }
+        if (v <= 8) setCharging(true);
+        return charging ? Math.min(capacity, v + 1.5) : Math.max(0, v - 0.4);
+      });
+    }, 120);
+    return () => clearInterval(iv);
+  }, [capacity, charging]);
+
+  const low = level < 20;
+  const full = level >= capacity;
+
+  return (
+    <div className="batt">
+      <div className={`batt-body${low ? ' low' : ''}${full ? ' full' : ''}`}>
+        <div className="batt-fill" style={{ width: `${level}%` }} />
+        <div className="batt-pct">{Math.round(level)}%</div>
+        {charging && !full && <div className="batt-bolt">⚡</div>}
+      </div>
+      <div className="batt-cap" />
+    </div>
+  );
+};
+
+export default BatteryCharge;

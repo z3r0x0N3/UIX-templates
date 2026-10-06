@@ -1,0 +1,32 @@
+'use client';
+
+import { useState } from 'react';
+import './CardStack.css';
+
+const CardStack = ({ cards = ['ALPHA', 'BETA', 'GAMMA', 'DELTA'] }) => {
+  const [order, setOrder] = useState(cards.map((_, i) => i));
+
+  const cycle = () => setOrder(([first, ...rest]) => [...rest, first]);
+
+  return (
+    <div className="cardstack" onClick={cycle} title="click to cycle">
+      {order.map((ci, depth) => (
+        <div
+          key={cards[ci]}
+          className="stack-card"
+          style={{
+            transform: `translateY(${depth * -12}px) scale(${1 - depth * 0.06})`,
+            zIndex: cards.length - depth,
+            opacity: 1 - depth * 0.18,
+            filter: `hue-rotate(${ci * 40}deg)`
+          }}
+        >
+          {cards[ci]}
+        </div>
+      ))}
+      <div className="stack-hint">click to cycle</div>
+    </div>
+  );
+};
+
+export default CardStack;

@@ -1,0 +1,22 @@
+'use client';
+
+import './SkeletonPulse.css';
+
+const SkeletonPulse = ({ rows = 3 }) => {
+  return (
+    <div className="skel" aria-busy="true" aria-label="Loading">
+      <div className="skel-head">
+        <div className="skel-avatar shimmer" />
+        <div className="skel-lines">
+          <div className="skel-line w60 shimmer" />
+          <div className="skel-line w40 shimmer" />
+        </div>
+      </div>
+      {Array.from({ length: rows }, (_, i) => (
+        <div key={i} className={`skel-line w${90 - i * 12} shimmer`} style={{ animationDelay: `${i * 0.15}s` }} />
+      ))}
+    </div>
+  );
+};
+
+export default SkeletonPulse;

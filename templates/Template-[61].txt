@@ -1,0 +1,28 @@
+'use client';
+
+import './PrismText.css';
+
+const PrismText = ({ text = 'PRISM', speed = 6, sat = 90, light = 60 }) => {
+  return (
+    <div className="prism-wrap">
+      <div
+        className="prism-text"
+        style={{
+          animationDuration: `${speed}s`,
+          backgroundImage: `linear-gradient(100deg,
+            hsl(0, ${sat}%, ${light}%),
+            hsl(60, ${sat}%, ${light}%),
+            hsl(120, ${sat}%, ${light}%),
+            hsl(180, ${sat}%, ${light}%),
+            hsl(240, ${sat}%, ${light}%),
+            hsl(300, ${sat}%, ${light}%),
+            hsl(360, ${sat}%, ${light}%))`
+        }}
+      >
+        {text}
+      </div>
+    </div>
+  );
+};
+
+export default PrismText;

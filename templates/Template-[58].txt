@@ -1,0 +1,43 @@
+'use client';
+
+import { useState } from 'react';
+import './OrbMenu.css';
+
+const OrbMenu = ({ items = ['◆', '●', '▲', '■', '✚'], color = '#00F0FF' }) => {
+  const [open, setOpen] = useState(false);
+  const R = 74;
+
+  return (
+    <div className="orbmenu">
+      {items.map((icon, i) => {
+        const a = (Math.PI * 2 * i) / items.length - Math.PI / 2;
+        return (
+          <button
+            key={i}
+            className={`orb-item${open ? ' open' : ''}`}
+            style={{
+              '--orb': color,
+              transform: open
+                ? `translate(${Math.cos(a) * R}px, ${Math.sin(a) * R}px) scale(1)`
+                : 'translate(0, 0) scale(0)',
+              transitionDelay: open ? `${i * 45}ms` : `${(items.length - i) * 30}ms`
+            }}
+            tabIndex={open ? 0 : -1}
+          >
+            {icon}
+          </button>
+        );
+      })}
+      <button
+        className={`orb-core${open ? ' open' : ''}`}
+        style={{ '--orb': color }}
+        onClick={() => setOpen(v => !v)}
+        aria-label="menu"
+      >
+        {open ? '✕' : '☰'}
+      </button>
+    </div>
+  );
+};
+
+export default OrbMenu;

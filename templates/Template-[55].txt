@@ -1,0 +1,46 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import './SevenSegClock.css';
+
+const SEG = {
+  0: [1, 1, 1, 1, 1, 1, 0], 1: [0, 1, 1, 0, 0, 0, 0], 2: [1, 1, 0, 1, 1, 0, 1],
+  3: [1, 1, 1, 1, 0, 0, 1], 4: [0, 1, 1, 0, 0, 1, 1], 5: [1, 0, 1, 1, 0, 1, 1],
+  6: [1, 0, 1, 1, 1, 1, 1], 7: [1, 1, 1, 0, 0, 0, 0], 8: [1, 1, 1, 1, 1, 1, 1],
+  9: [1, 1, 1, 1, 0, 1, 1]
+};
+
+const Digit = ({ value, color }) => (
+  <div className="seg-digit" style={{ '--seg': color }}>
+    {SEG[value].map((on, i) => (
+      <div key={i} className={`seg s${i}${on ? ' on' : ''}`} />
+    ))}
+  </div>
+);
+
+const SevenSegClock = ({ color = '#FF3B00' }) => {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const iv = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  const str = [now.getHours(), now.getMinutes(), now.getSeconds()]
+    .map(n => String(n).padStart(2, '0'))
+    .join(':');
+
+  return (
+    <div className="seg-clock">
+      {str.split('').map((ch, i) =>
+        ch === ':' ? (
+          <div key={i} className="seg-colon" style={{ color }}><span /><span /></div>
+        ) : (
+          <Digit key={i} value={Number(ch)} color={color} />
+        )
+      )}
+    </div>
+  );
+};
+
+export default SevenSegClock;

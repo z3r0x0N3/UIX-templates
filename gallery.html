@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Template Animations — live renders of all 13 effects</title>
+<title>Template Animations — live renders of all 59 effects</title>
 <style>
   * { box-sizing: border-box; }
   body { background:#0A0E14; color:#C8DCEB; font-family:ui-monospace,Menlo,Consolas,monospace; margin:0; padding:24px; }
@@ -259,10 +259,142 @@
   .cr-dot.on { background:#fff; transform:scale(1.2); }
 
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
+
+  /* ── 38 NeonSign ── */
+  .neon-sign { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:900; letter-spacing:6px; }
+  .neon-letter { animation:neon-fl 4s linear infinite; text-shadow:0 0 6px currentColor,0 0 18px currentColor,0 0 42px currentColor; }
+  @keyframes neon-fl { 0%,100%{opacity:1} 3%{opacity:.4} 5%{opacity:1} 42%{opacity:1} 44%{opacity:.3} 46%{opacity:1} 71%{opacity:1} 72%{opacity:.55} 74%{opacity:1} }
+
+  /* ── 40 AuroraMesh ── */
+  .aurora-mesh { position:relative; width:100%; min-height:180px; overflow:hidden; border-radius:10px; background:#05080e; }
+  .aurora-blob { position:absolute; border-radius:50%; opacity:.55; animation:aur-drift 11s ease-in-out infinite alternate; }
+  @keyframes aur-drift { to { transform:translate(60px,-40px) scale(1.25); } }
+  .aurora-content { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; min-height:180px; font-weight:900; letter-spacing:4px; color:#fff; text-shadow:0 2px 18px #000; }
+
+  /* ── 41 Typewriter ── */
+  .typewriter { font-size:18px; min-height:30px; }
+  .tw-caret { color:#00F0FF; animation:blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* ── 43 Equalizer ── */
+  .eq { display:flex; align-items:flex-end; gap:4px; height:96px; }
+  .eq-bar { width:9px; border-radius:3px; transition:height .12s linear; box-shadow:0 0 8px currentColor; }
+
+  /* ── 45 TiltCard ── */
+  .tilt-scene { perspective:800px; width:100%; display:flex; justify-content:center; }
+  .tilt-card { position:relative; width:230px; padding:30px 22px; background:#141a26; border:1px solid #2a3346; border-radius:14px; transform-style:preserve-3d; transition:transform .08s linear; text-align:center; }
+  .tilt-glare { position:absolute; inset:0; border-radius:14px; pointer-events:none; }
+
+  /* ── 46 Marquee ── */
+  .marquee { overflow:hidden; width:100%; white-space:nowrap; }
+  .marquee-track { display:inline-flex; animation:marq 18s linear infinite; }
+  .marquee-half { display:inline-flex; }
+  .marquee-item { padding:0 20px; font-weight:800; font-size:20px; }
+  .marquee-sep { color:#00F0FF; }
+  @keyframes marq { to { transform:translateX(-50%); } }
+
+  /* ── 47 FlipClock ── */
+  .flip-clock { display:flex; gap:6px; align-items:center; }
+  .flip-digit { background:#1a2230; border:1px solid #334; border-radius:6px; font-size:26px; font-weight:800; padding:4px 9px; }
+  .flip-colon { color:#00F0FF; font-weight:900; animation:blink 1s steps(1) infinite; }
+
+  /* ── 48 ProgressRing ── */
+  .pring { position:relative; }
+  .pring-label { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:22px; }
+
+  /* ── 50 HologramCard ── */
+  .holo { --holo:#00F0FF; position:relative; width:100%; max-width:300px; background:rgba(0,240,255,.05); border:1px solid var(--holo); border-radius:12px; padding:22px; overflow:hidden; animation:holo-fl 4s linear infinite; }
+  @keyframes holo-fl { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.55} 94%{opacity:1} 96%{opacity:.7} 97%{opacity:1} }
+  .holo-scan { position:absolute; left:0; right:0; height:44px; background:linear-gradient(transparent,var(--holo),transparent); opacity:.22; animation:holo-scan 3s linear infinite; }
+  @keyframes holo-scan { 0%{top:-44px} 100%{top:100%} }
+  .holo-title { font-weight:900; letter-spacing:4px; color:var(--holo); text-shadow:0 0 14px var(--holo); }
+  .holo-sub { font-size:11px; color:#8a97a8; margin-top:4px; }
+  .holo-bars { display:flex; gap:5px; align-items:flex-end; height:30px; margin-top:12px; }
+  .holo-bars span { width:9px; background:var(--holo); animation:holo-eq 1s ease-in-out infinite alternate; }
+  @keyframes holo-eq { from{transform:scaleY(.3)} to{transform:scaleY(1)} }
+
+  /* ── 51 WordRotator ── */
+  .wrot { font-size:24px; font-weight:800; display:flex; gap:10px; align-items:baseline; }
+  .wrot-word { color:#00F0FF; display:inline-block; transition:transform .35s,opacity .35s; }
+  .wrot-word.out { transform:translateY(90%); opacity:0; }
+
+  /* ── 52 SkeletonPulse ── */
+  .skel { width:100%; display:flex; flex-direction:column; gap:10px; }
+  .skel-head { display:flex; gap:12px; align-items:center; }
+  .skel-avatar { width:44px; height:44px; border-radius:50%; }
+  .skel-lines { flex:1; display:flex; flex-direction:column; gap:8px; }
+  .skel-line { height:12px; border-radius:6px; }
+  .skel-line.w60 { width:60%; } .skel-line.w40 { width:40%; } .skel-line.w90 { width:90%; } .skel-line.w78 { width:78%; } .skel-line.w66 { width:66%; }
+  .shimmer { background:linear-gradient(90deg,#1a2230 25%,#2c3e58 50%,#1a2230 75%); background-size:200% 100%; animation:skel 1.4s linear infinite; }
+  @keyframes skel { to { background-position:-200% 0; } }
+
+  /* ── 53 RippleButton ── */
+  .ripple-btn { position:relative; overflow:hidden; background:#10151d; border:1px solid #00F0FF; color:#fff; padding:13px 34px; border-radius:10px; cursor:pointer; font-weight:700; font-size:15px; }
+  .ripple-label { position:relative; z-index:1; }
+  .ripple-wave { position:absolute; border-radius:50%; background:var(--ripple,#00F0FF); opacity:.35; transform:scale(0); animation:rip .65s ease-out forwards; pointer-events:none; }
+  @keyframes rip { to { transform:scale(1); opacity:0; } }
+
+  /* ── 54 GhostTrail ── */
+  .ghost-zone { position:relative; width:100%; min-height:180px; overflow:hidden; background:#0A0E14; border-radius:10px; }
+  .ghost-dot { position:absolute; left:0; top:0; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; pointer-events:none; }
+  .ghost-hint { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#445; font-size:12px; pointer-events:none; }
+
+  /* ── 55 SevenSegClock ── */
+  .seg-clock { display:flex; gap:8px; align-items:center; }
+  .seg-digit { position:relative; width:34px; height:60px; }
+  .seg { position:absolute; background:#2a1410; border-radius:2px; }
+  .seg.on { background:var(--seg); box-shadow:0 0 9px var(--seg); }
+  .seg.s0 { left:5px; right:5px; top:0; height:5px; } .seg.s3 { left:5px; right:5px; bottom:0; height:5px; } .seg.s6 { left:5px; right:5px; top:27px; height:5px; }
+  .seg.s1 { right:0; top:5px; width:5px; height:22px; } .seg.s2 { right:0; bottom:5px; width:5px; height:22px; }
+  .seg.s5 { left:0; top:5px; width:5px; height:22px; } .seg.s4 { left:0; bottom:5px; width:5px; height:22px; }
+  .seg-colon { display:flex; flex-direction:column; gap:8px; animation:blink 1s steps(1) infinite; }
+  .seg-colon span { width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+  /* ── 56 BatteryCharge ── */
+  .batt { display:flex; align-items:center; }
+  .batt-body { position:relative; width:190px; height:58px; border:2px solid #3a4a5f; border-radius:9px; overflow:hidden; }
+  .batt-fill { height:100%; background:linear-gradient(90deg,#08A66C,#00F0FF); transition:width .12s linear; }
+  .batt-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:800; text-shadow:0 1px 6px #000; }
+  .batt-bolt { position:absolute; right:10px; top:50%; transform:translateY(-50%); }
+  .batt-cap { width:7px; height:26px; background:#3a4a5f; border-radius:0 4px 4px 0; margin-left:3px; }
+  .batt.low .batt-body { border-color:#FF003C; } .batt.low .batt-fill { background:#FF003C; }
+  .batt.full .batt-body { border-color:#08A66C; box-shadow:0 0 14px rgba(8,166,108,.5); }
+
+  /* ── 57 SignalPulse ── */
+  .sigpulse { position:relative; width:130px; height:130px; display:flex; align-items:center; justify-content:center; }
+  .sig-dot { width:15px; height:15px; border-radius:50%; background:var(--sig); box-shadow:0 0 14px var(--sig); z-index:1; }
+  .sig-ring { position:absolute; inset:0; border:2px solid var(--sig); border-radius:50%; animation:sig 2.1s ease-out infinite; }
+  @keyframes sig { 0%{transform:scale(.15); opacity:1} 100%{transform:scale(1); opacity:0} }
+
+  /* ── 58 OrbMenu ── */
+  .orbmenu { position:relative; width:200px; height:200px; }
+  .orb-core { position:absolute; left:50%; top:50%; width:54px; height:54px; margin:-27px 0 0 -27px; border-radius:50%; background:#141a26; border:1px solid var(--orb); color:#fff; font-size:20px; cursor:pointer; z-index:2; transition:transform .3s; }
+  .orb-core.open { transform:rotate(90deg); }
+  .orb-item { position:absolute; left:50%; top:50%; width:42px; height:42px; margin:-21px 0 0 -21px; border-radius:50%; background:#1a2230; border:1px solid var(--orb); color:#fff; font-size:17px; transition:transform .3s cubic-bezier(.2,.9,.3,1.3); }
+
+  /* ── 59 CardStack ── */
+  .cardstack { position:relative; width:230px; height:150px; cursor:pointer; }
+  .stack-card { position:absolute; inset:0; background:#141a26; border:1px solid #2a3346; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:26px; letter-spacing:3px; transition:transform .3s; }
+  .stack-hint { position:absolute; bottom:-26px; width:100%; text-align:center; font-size:11px; color:#667; }
+
+  /* ── 60 ShimmerButton ── */
+  .shimmer-btn { position:relative; overflow:hidden; background:linear-gradient(135deg,#1c1038,#10151d); border:1px solid var(--tint); color:#fff; padding:15px 40px; border-radius:12px; font-weight:800; font-size:16px; cursor:pointer; transition:transform .1s; }
+  .shimmer-sheen { position:absolute; top:0; bottom:0; width:60px; background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent); animation:sheen 2.6s linear infinite; }
+  @keyframes sheen { 0%{left:-80px} 100%{left:110%} }
+  .shimmer-label { position:relative; z-index:1; }
+
+  /* ── 61 PrismText ── */
+  .prism-text { font-size:46px; font-weight:900; letter-spacing:4px; background-size:300% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:prism 6s linear infinite; filter:saturate(1.5); }
+  @keyframes prism { to { background-position:300% 0; } }
+
+  /* ── 62 ScrambleGrid ── */
+  .scramble-grid { display:grid; gap:5px; width:100%; }
+  .scell { background:#141a26; border-radius:4px; text-align:center; padding:7px 0; font-weight:700; color:#54637a; font-size:14px; }
+  .scell.done { color:#00F0FF; text-shadow:0 0 9px rgba(0,240,255,.65); }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 34 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 59 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -380,6 +512,81 @@
 
 <section class="card"><h2>[37] CAROUSEL</h2><p class="src">Template-[37].txt · Carousel — drag to spin through cards (autoplay + loop on, pause on hover)</p>
 <div class="stage"><div id="carousel"></div></div></section>
+
+<section class="card"><h2>[38] NEON SIGN</h2><p class="src">Template-[38].txt · NeonSign — buzzing tube flicker</p>
+<div class="stage"><div class="neon-sign" id="neon38" style="color:#00F0FF">OPEN</div></div></section>
+
+<section class="card"><h2>[39] MATRIX RAIN</h2><p class="src">Template-[39].txt · MatrixRain — falling katakana</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="matrix39" width="320" height="180"></canvas></div></section>
+
+<section class="card"><h2>[40] AURORA MESH</h2><p class="src">Template-[40].txt · AuroraMesh — drifting gradient blobs</p>
+<div class="stage" style="width:100%"><div class="aurora-mesh" id="aurora40"><div class="aurora-content">AURORA</div></div></div></section>
+
+<section class="card"><h2>[41] TYPEWRITER</h2><p class="src">Template-[41].txt · Typewriter — auto-typing lines</p>
+<div class="stage"><div class="typewriter"><span id="type41"></span><span class="tw-caret">▌</span></div></div></section>
+
+<section class="card"><h2>[42] RADAR SWEEP</h2><p class="src">Template-[42].txt · RadarSweep — sweep flares blips</p>
+<div class="stage"><canvas class="fx" id="radar42" width="180" height="180" style="width:180px"></canvas></div></section>
+
+<section class="card"><h2>[43] EQUALIZER</h2><p class="src">Template-[43].txt · Equalizer — dancing bars</p>
+<div class="stage"><div class="eq" id="eq43" style="color:#00F0FF"></div></div></section>
+
+<section class="card"><h2>[44] CONFETTI BURST</h2><p class="src">Template-[44].txt · ConfettiBurst — click to explode</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="confetti44" width="320" height="180" style="cursor:pointer"></canvas></div></section>
+
+<section class="card"><h2>[45] TILT CARD</h2><p class="src">Template-[45].txt · TiltCard — 3D tilt + glare, move mouse</p>
+<div class="stage"><div class="tilt-scene"><div class="tilt-card" id="tilt45"><div style="font-weight:900">TILT ME</div><div style="font-size:12px;color:#8a97a8;margin-top:6px">move your mouse across</div><div class="tilt-glare" id="glare45"></div></div></div></div></section>
+
+<section class="card"><h2>[46] MARQUEE</h2><p class="src">Template-[46].txt · Marquee — infinite ticker</p>
+<div class="stage" style="width:100%"><div class="marquee"><div class="marquee-track" id="marquee46"></div></div></div></section>
+
+<section class="card"><h2>[47] FLIP CLOCK</h2><p class="src">Template-[47].txt · FlipClock — countdown digits</p>
+<div class="stage"><div class="flip-clock" id="flip47"></div></div></section>
+
+<section class="card"><h2>[48] PROGRESS RING</h2><p class="src">Template-[48].txt · ProgressRing — SVG arc to 82%</p>
+<div class="stage"><div class="pring" id="pring48"></div></div></section>
+
+<section class="card"><h2>[49] PARTICLE ORBIT</h2><p class="src">Template-[49].txt · ParticleOrbit — bodies ring a core</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="orbit49" width="320" height="180"></canvas></div></section>
+
+<section class="card"><h2>[50] HOLOGRAM CARD</h2><p class="src">Template-[50].txt · HologramCard — scanline flicker</p>
+<div class="stage"><div class="holo"><div class="holo-scan"></div><div class="holo-title">AETHERION</div><div class="holo-sub">holographic interface</div><div class="holo-bars" id="holo50"></div></div></div></section>
+
+<section class="card"><h2>[51] WORD ROTATOR</h2><p class="src">Template-[51].txt · WordRotator — cycling headline</p>
+<div class="stage"><div class="wrot"><span>We build</span><span class="wrot-word" id="wrot51">interfaces</span></div></div></section>
+
+<section class="card"><h2>[52] SKELETON PULSE</h2><p class="src">Template-[52].txt · SkeletonPulse — loading shimmer</p>
+<div class="stage" style="width:100%"><div class="skel"><div class="skel-head"><div class="skel-avatar shimmer"></div><div class="skel-lines"><div class="skel-line w60 shimmer"></div><div class="skel-line w40 shimmer"></div></div></div><div class="skel-line w90 shimmer"></div><div class="skel-line w78 shimmer"></div><div class="skel-line w66 shimmer"></div></div></div></section>
+
+<section class="card"><h2>[53] RIPPLE BUTTON</h2><p class="src">Template-[53].txt · RippleButton — click for material ripple</p>
+<div class="stage"><button class="ripple-btn" id="ripple53" style="--ripple:#00F0FF"><span class="ripple-label">Deploy</span></button></div></section>
+
+<section class="card"><h2>[54] GHOST TRAIL</h2><p class="src">Template-[54].txt · GhostTrail — cursor trailer, move mouse</p>
+<div class="stage" style="width:100%"><div class="ghost-zone" id="ghost54"><span class="ghost-hint">move mouse here</span></div></div></section>
+
+<section class="card"><h2>[55] SEVEN-SEG CLOCK</h2><p class="src">Template-[55].txt · SevenSegClock — live LED time</p>
+<div class="stage"><div class="seg-clock" id="seg55"></div></div></section>
+
+<section class="card"><h2>[56] BATTERY CHARGE</h2><p class="src">Template-[56].txt · BatteryCharge — charge/discharge loop</p>
+<div class="stage"><div class="batt" id="batt56"><div class="batt-body"><div class="batt-fill" id="battfill56" style="width:12%"></div><div class="batt-pct" id="battpct56">12%</div><div class="batt-bolt">⚡</div></div><div class="batt-cap"></div></div></div></section>
+
+<section class="card"><h2>[57] SIGNAL PULSE</h2><p class="src">Template-[57].txt · SignalPulse — radiating beacon</p>
+<div class="stage"><div class="sigpulse" style="--sig:#08A66C"><div class="sig-dot"></div><span class="sig-ring" style="animation-delay:0s"></span><span class="sig-ring" style="animation-delay:.7s"></span><span class="sig-ring" style="animation-delay:1.4s"></span></div></div></section>
+
+<section class="card"><h2>[58] ORB MENU</h2><p class="src">Template-[58].txt · OrbMenu — click core to expand</p>
+<div class="stage"><div class="orbmenu" id="orb58" style="--orb:#00F0FF"><button class="orb-core" id="orbcore58">☰</button></div></div></section>
+
+<section class="card"><h2>[59] CARD STACK</h2><p class="src">Template-[59].txt · CardStack — click to cycle</p>
+<div class="stage"><div class="cardstack" id="stack59"></div></div></section>
+
+<section class="card"><h2>[60] SHIMMER BUTTON</h2><p class="src">Template-[60].txt · ShimmerButton — sheen sweep + magnetic pull</p>
+<div class="stage"><button class="shimmer-btn" id="shim60" style="--tint:#8A00FF"><span class="shimmer-sheen"></span><span class="shimmer-label">Launch</span></button></div></section>
+
+<section class="card"><h2>[61] PRISM TEXT</h2><p class="src">Template-[61].txt · PrismText — hue-cycling gradient</p>
+<div class="stage"><div class="prism-text" style="background-image:linear-gradient(100deg,hsl(0,90%,60%),hsl(60,90%,60%),hsl(120,90%,60%),hsl(180,90%,60%),hsl(240,90%,60%),hsl(300,90%,60%),hsl(360,90%,60%))">PRISM</div></div></section>
+
+<section class="card"><h2>[62] SCRAMBLE GRID</h2><p class="src">Template-[62].txt · ScrambleGrid — settling cipher wall</p>
+<div class="stage" style="width:100%"><div class="scramble-grid" id="scram62" style="grid-template-columns:repeat(12,1fr)"></div></div></section>
 
 </div>
 <script>
@@ -2370,6 +2577,205 @@ function Carousel(el, o) {
 (() => { const host = document.getElementById('carousel'); if (!host) return;
   Carousel(host, { autoplay: true, autoplayDelay: 3000, pauseOnHover: true, loop: true });
 })();
+// ── 38 NeonSign letter stagger ──
+(() => { const el = document.getElementById('neon38'); if (!el) return;
+  const t = el.textContent; el.innerHTML = '';
+  [...t].forEach((ch, i) => { const s = document.createElement('span'); s.className = 'neon-letter';
+    s.style.animationDelay = ((i * 0.37) % 4) + 's'; s.textContent = ch === ' ' ? ' ' : ch; el.appendChild(s); }); })();
+// ── 39 MatrixRain ──
+(() => { const c = document.getElementById('matrix39'); if (!c) return; const x = c.getContext('2d');
+  const G = 'アイウエオカキクケコ0123456789ABCDEF$#*+='; const F = 14;
+  const cols = Math.floor(c.width / F); const drops = Array.from({length: cols}, () => Math.random() * -50);
+  (function tick() { x.fillStyle = 'rgba(0,0,0,0.08)'; x.fillRect(0, 0, c.width, c.height);
+    x.fillStyle = '#00FF41'; x.font = F + 'px monospace';
+    drops.forEach((y, i) => { x.fillText(G[Math.floor(Math.random() * G.length)], i * F, y * F);
+      drops[i] = y * F > c.height && Math.random() > 0.975 ? 0 : y + 1; });
+    requestAnimationFrame(tick); }); })();
+// ── 40 AuroraMesh blobs ──
+(() => { const host = document.getElementById('aurora40'); if (!host) return;
+  [['#00F0FF','10%','20%',220,'11s'],['#FF003C','70%','10%',260,'14s'],['#8A00FF','40%','70%',240,'9s'],['#08A66C','80%','75%',200,'12s']]
+  .forEach(b => { const d = document.createElement('div'); d.className = 'aurora-blob';
+    d.style.cssText = `background:${b[0]};left:${b[1]};top:${b[2]};width:${b[3]}px;height:${b[3]}px;filter:blur(60px);animation-duration:${b[4]}`;
+    host.insertBefore(d, host.firstChild); }); })();
+// ── 41 Typewriter ──
+(() => { const el = document.getElementById('type41'); if (!el) return;
+  const LINES = ['Hello, operator.', 'Systems nominal.', 'Awaiting input_'];
+  let li = 0, ci = 0;
+  (function step() { const line = LINES[li % LINES.length];
+    if (ci <= line.length) { el.textContent = line.slice(0, ci); ci++;
+      setTimeout(step, ci > line.length ? 1200 : 55); }
+    else { ci = 0; li++; setTimeout(step, 200); } })(); })();
+// ── 42 RadarSweep ──
+(() => { const c = document.getElementById('radar42'); if (!c) return; const x = c.getContext('2d');
+  const R = 90, T = Array.from({length: 5}, () => ({a: Math.random() * 6.28, r: R * (0.25 + Math.random() * 0.7), heat: 0}));
+  let ang = 0;
+  (function tick() { ang += 0.03;
+    x.fillStyle = 'rgba(4,12,4,0.18)'; x.fillRect(0, 0, 180, 180);
+    x.save(); x.translate(R, R); x.strokeStyle = 'rgba(0,255,65,0.35)';
+    [0.33, 0.66, 1].forEach(k => { x.beginPath(); x.arc(0, 0, R * k, 0, 6.29); x.stroke(); });
+    x.beginPath(); x.moveTo(-R, 0); x.lineTo(R, 0); x.moveTo(0, -R); x.lineTo(0, R); x.stroke();
+    x.save(); x.rotate(ang);
+    const g = x.createLinearGradient(0, 0, R, 0);
+    g.addColorStop(0, 'rgba(0,255,65,0)'); g.addColorStop(1, '#00FF41');
+    x.strokeStyle = g; x.lineWidth = 2; x.beginPath(); x.moveTo(0, 0); x.lineTo(R, 0); x.stroke(); x.restore();
+    T.forEach(t => { let d = (ang - t.a) % 6.28; if (d < 0) d += 6.28;
+      t.heat = d < 0.4 ? 1 : Math.max(0, t.heat - 0.02);
+      x.fillStyle = `rgba(0,255,65,${0.25 + t.heat * 0.75})`;
+      x.beginPath(); x.arc(Math.cos(t.a) * t.r, Math.sin(t.a) * t.r, 2 + t.heat * 3, 0, 6.29); x.fill(); });
+    x.restore(); requestAnimationFrame(tick); }); })();
+// ── 43 Equalizer ──
+(() => { const host = document.getElementById('eq43'); if (!host) return;
+  const bars = Array.from({length: 24}, () => { const d = document.createElement('div'); d.className = 'eq-bar';
+    d.style.background = '#00F0FF'; host.appendChild(d); return d; });
+  setInterval(() => bars.forEach(b => { b.style.height = (6 + Math.random() * 94) + '%'; }), 120); })();
+// ── 44 ConfettiBurst ──
+(() => { const c = document.getElementById('confetti44'); if (!c) return; const x = c.getContext('2d');
+  const C = ['#00F0FF','#FF003C','#FFD400','#08A66C','#8A00FF','#FFFFFF'];
+  let parts = [], raf = 0;
+  function burst(px) { for (let i = 0; i < 120; i++) { const a = Math.random() * 6.28, sp = 2 + Math.random() * 5;
+      parts.push({x: px, y: 90, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2, s: 2 + Math.random() * 4,
+        r: Math.random() * 3, vr: (Math.random() - .5) * .3, c: C[i % C.length]}); }
+    cancelAnimationFrame(raf); tick(); }
+  function tick() { x.clearRect(0, 0, c.width, c.height);
+    parts = parts.filter(p => p.y < c.height + 10);
+    parts.forEach(p => { p.vy += .12; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c;
+      x.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); x.restore(); });
+    if (parts.length) raf = requestAnimationFrame(tick); }
+  c.addEventListener('click', e => { const r = c.getBoundingClientRect();
+    burst((e.clientX - r.left) * (c.width / r.width)); });
+  burst(c.width / 2); })();
+// ── 45 TiltCard ──
+(() => { const card = document.getElementById('tilt45'), gl = document.getElementById('glare45'); if (!card) return;
+  card.addEventListener('mousemove', e => { const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    card.style.transform = `rotateX(${(0.5 - py) * 28}deg) rotateY(${(px - 0.5) * 28}deg)`;
+    if (gl) gl.style.background = `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,.25), transparent 60%)`; });
+  card.addEventListener('mouseleave', () => { card.style.transform = 'rotateX(0) rotateY(0)'; }); })();
+// ── 46 Marquee ──
+(() => { const t = document.getElementById('marquee46'); if (!t) return;
+  const items = ['AETHERION', 'ONLINE', 'SYNCED', 'LIVE'];
+  const half = items.map(s => `<span class="marquee-item">${s} <span class="marquee-sep">◆</span></span>`).join('');
+  t.innerHTML = `<div class="marquee-half">${half}</div><div class="marquee-half" aria-hidden="true">${half}</div>`; })();
+// ── 47 FlipClock (62-minute countdown) ──
+(() => { const host = document.getElementById('flip47'); if (!host) return;
+  const end = Date.now() + 62 * 60000;
+  function paint() { const ms = Math.max(0, end - Date.now());
+    const s = [ms / 3600000, ms / 60000 % 60, ms / 1000 % 60].map(n => String(Math.floor(n)).padStart(2, '0')).join(':');
+    host.innerHTML = [...s].map((ch, i) => ch === ':'
+      ? '<span class="flip-colon">:</span>'
+      : `<div class="flip-digit" key="${i}${ch}">${ch}</div>`).join(''); }
+  paint(); setInterval(paint, 250); })();
+// ── 48 ProgressRing ──
+(() => { const host = document.getElementById('pring48'); if (!host) return;
+  const S = 120, R = 55, C = 2 * Math.PI * R, T = 0.82;
+  host.style.width = host.style.height = S + 'px';
+  host.innerHTML = `<svg width="${S}" height="${S}"><circle cx="60" cy="60" r="${R}" stroke="rgba(255,255,255,.08)" stroke-width="10" fill="none"/>` +
+    `<circle id="pringarc" cx="60" cy="60" r="${R}" stroke="#00F0FF" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" transform="rotate(-90 60 60)"/></svg>` +
+    `<div class="pring-label" id="pringlab">0%</div>`;
+  const arc = document.getElementById('pringarc'), lab = document.getElementById('pringlab');
+  const t0 = performance.now();
+  (function step(n) { const k = Math.min(1, (n - t0) / 1400), e = 1 - Math.pow(1 - k, 3), p = T * e;
+    arc.setAttribute('stroke-dashoffset', C * (1 - p)); lab.textContent = Math.round(p * 100) + '%';
+    if (k < 1) requestAnimationFrame(step); })(t0); })();
+// ── 49 ParticleOrbit ──
+(() => { const c = document.getElementById('orbit49'); if (!c) return; const x = c.getContext('2d');
+  const cx = 160, cy = 90, rings = [34, 58, 82];
+  const ps = Array.from({length: 90}, () => ({ring: rings[Math.floor(Math.random() * 3)],
+    a: Math.random() * 6.28, sp: (0.004 + Math.random() * 0.012) * (Math.random() > 0.5 ? 1 : -1), s: 0.8 + Math.random() * 1.8}));
+  (function tick() { x.fillStyle = 'rgba(5,8,14,0.25)'; x.fillRect(0, 0, 320, 180);
+    const g = x.createRadialGradient(cx, cy, 0, cx, cy, 14);
+    g.addColorStop(0, '#fff'); g.addColorStop(0.4, '#00F0FF'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = g; x.beginPath(); x.arc(cx, cy, 14, 0, 6.29); x.fill();
+    x.strokeStyle = 'rgba(120,160,200,0.18)';
+    rings.forEach(r => { x.beginPath(); x.arc(cx, cy, r, 0, 6.29); x.stroke(); });
+    ps.forEach(p => { p.a += p.sp; x.fillStyle = 'rgba(200,230,255,0.9)';
+      x.beginPath(); x.arc(cx + Math.cos(p.a) * p.ring, cy + Math.sin(p.a) * p.ring * 0.62, p.s, 0, 6.29); x.fill(); });
+    requestAnimationFrame(tick); }); })();
+// ── 50 Hologram bars ──
+(() => { const host = document.getElementById('holo50'); if (!host) return;
+  [0.7, 0.4, 0.9, 0.55, 0.8, 0.35].forEach((v, i) => { const s = document.createElement('span');
+    s.style.height = (v * 100) + '%'; s.style.animationDelay = (i * 0.18) + 's'; host.appendChild(s); }); })();
+// ── 51 WordRotator ──
+(() => { const el = document.getElementById('wrot51'); if (!el) return;
+  const W = ['interfaces', 'systems', 'futures']; let i = 0;
+  setInterval(() => { el.classList.add('out');
+    setTimeout(() => { i = (i + 1) % W.length; el.textContent = W[i]; el.classList.remove('out'); }, 350); }, 2200); })();
+// ── 53 RippleButton ──
+(() => { const b = document.getElementById('ripple53'); if (!b) return; let seq = 0;
+  b.addEventListener('click', e => { const r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2, id = seq++;
+    const s = document.createElement('span'); s.className = 'ripple-wave';
+    s.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left - d / 2}px;top:${e.clientY - r.top - d / 2}px`;
+    b.appendChild(s); setTimeout(() => s.remove(), 700); }); })();
+// ── 54 GhostTrail ──
+(() => { const z = document.getElementById('ghost54'); if (!z) return;
+  const dots = Array.from({length: 14}, () => { const d = document.createElement('div');
+    d.className = 'ghost-dot'; d.style.background = '#8A00FF'; z.appendChild(d); return {el: d, x: 0, y: 0}; });
+  let mx = -100, my = -100;
+  z.addEventListener('mousemove', e => { const r = z.getBoundingClientRect();
+    mx = e.clientX - r.left; my = e.clientY - r.top; });
+  (function tick() { let px = mx, py = my;
+    dots.forEach((d, i) => { d.x += (px - d.x) * 0.35; d.y += (py - d.y) * 0.35;
+      const s = 1 - i / dots.length;
+      d.el.style.transform = `translate(${d.x}px,${d.y}px) scale(${s})`; d.el.style.opacity = s * 0.9;
+      px = d.x; py = d.y; });
+    requestAnimationFrame(tick); }); })();
+// ── 55 SevenSegClock ──
+(() => { const host = document.getElementById('seg55'); if (!host) return;
+  const SEG = {0:[1,1,1,1,1,1,0],1:[0,1,1,0,0,0,0],2:[1,1,0,1,1,0,1],3:[1,1,1,1,0,0,1],4:[0,1,1,0,0,1,1],5:[1,0,1,1,0,1,1],6:[1,0,1,1,1,1,1],7:[1,1,1,0,0,0,0],8:[1,1,1,1,1,1,1],9:[1,1,1,1,0,1,1]};
+  function paint() { const n = new Date();
+    const s = [n.getHours(), n.getMinutes(), n.getSeconds()].map(v => String(v).padStart(2, '0')).join(':');
+    host.innerHTML = [...s].map(ch => ch === ':'
+      ? '<div class="seg-colon" style="color:#FF3B00"><span></span><span></span></div>'
+      : `<div class="seg-digit" style="--seg:#FF3B00">${SEG[+ch].map((on, i) => `<div class="seg s${i}${on ? ' on' : ''}"></div>`).join('')}</div>`).join(''); }
+  paint(); setInterval(paint, 1000); })();
+// ── 56 BatteryCharge ──
+(() => { const root = document.getElementById('batt56'); if (!root) return;
+  const fill = document.getElementById('battfill56'), pct = document.getElementById('battpct56');
+  let v = 12, up = true;
+  setInterval(() => { v = up ? Math.min(100, v + 1.5) : Math.max(0, v - 0.4);
+    if (v >= 100) up = false; if (v <= 8) up = true;
+    fill.style.width = v + '%'; pct.textContent = Math.round(v) + '%';
+    root.classList.toggle('low', v < 20); root.classList.toggle('full', v >= 100); }, 120); })();
+// ── 58 OrbMenu ──
+(() => { const menu = document.getElementById('orb58'), core = document.getElementById('orbcore58'); if (!menu) return;
+  const icons = ['◆', '●', '▲', '■', '✚']; let open = false; const R = 74;
+  const btns = icons.map(ic => { const b = document.createElement('button'); b.className = 'orb-item';
+    b.textContent = ic; b.tabIndex = -1; menu.insertBefore(b, core); return b; });
+  core.addEventListener('click', () => { open = !open; core.textContent = open ? '✕' : '☰';
+    core.classList.toggle('open', open);
+    btns.forEach((b, i) => { const a = (Math.PI * 2 * i) / btns.length - Math.PI / 2;
+      b.style.transform = open ? `translate(${Math.cos(a) * R}px,${Math.sin(a) * R}px) scale(1)` : 'translate(0,0) scale(0)';
+      b.style.transitionDelay = open ? (i * 45) + 'ms' : ((btns.length - i) * 30) + 'ms';
+      b.tabIndex = open ? 0 : -1; }); }); })();
+// ── 59 CardStack ──
+(() => { const host = document.getElementById('stack59'); if (!host) return;
+  const cards = ['ALPHA', 'BETA', 'GAMMA', 'DELTA']; let order = [0, 1, 2, 3];
+  function paint() { host.innerHTML = '';
+    order.forEach((ci, d) => { const el = document.createElement('div'); el.className = 'stack-card';
+      el.textContent = cards[ci];
+      el.style.cssText = `transform:translateY(${d * -12}px) scale(${1 - d * 0.06});z-index:${cards.length - d};opacity:${1 - d * 0.18};filter:hue-rotate(${ci * 40}deg)`;
+      host.appendChild(el); });
+    const h = document.createElement('div'); h.className = 'stack-hint'; h.textContent = 'click to cycle';
+    host.appendChild(h); }
+  host.addEventListener('click', () => { order.push(order.shift()); paint(); });
+  paint(); })();
+// ── 60 ShimmerButton magnetic pull ──
+(() => { const b = document.getElementById('shim60'); if (!b) return;
+  b.addEventListener('mousemove', e => { const r = b.getBoundingClientRect();
+    b.style.transform = `translateX(${((e.clientX - r.left - r.width / 2) / r.width) * 6}px)`; });
+  b.addEventListener('mouseleave', () => { b.style.transform = 'translateX(0)'; }); })();
+// ── 62 ScrambleGrid ──
+(() => { const host = document.getElementById('scram62'); if (!host) return;
+  const CH = '!<>-_\\/[]{}—=+*^?#________', ROWS = 4, COLS = 12, WORD = 'AETHERION', TOT = ROWS * COLS;
+  setInterval(() => { host.innerHTML = '';
+    for (let i = 0; i < TOT; i++) {
+      const phase = (Date.now() / 120 + i * 0.7) % (TOT + 20);
+      const done = phase > i + 8;
+      const s = document.createElement('span'); s.className = 'scell' + (done ? ' done' : '');
+      const flat = WORD.padEnd(TOT, ' ').slice(0, TOT);
+      const ch = done ? flat[i] : CH[Math.floor(Math.random() * CH.length)];
+      s.textContent = ch === ' ' ? ' ' : ch; host.appendChild(s); } }, 90); })();
 </script>
 </body>
 </html>

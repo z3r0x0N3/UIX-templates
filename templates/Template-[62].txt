@@ -1,0 +1,40 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import './ScrambleGrid.css';
+
+const CHARS = '!<>-_\\/[]{}—=+*^?#________';
+
+const ScrambleGrid = ({ rows = 4, cols = 12, word = 'AETHERION' }) => {
+  const [cells, setCells] = useState([]);
+
+  useEffect(() => {
+    const total = rows * cols;
+    const iv = setInterval(() => {
+      setCells(
+        Array.from({ length: total }, (_, i) => {
+          // settle cells left-to-right, top-to-bottom over time
+          const phase = (Date.now() / 120 + i * 0.7) % (total + 20);
+          if (phase > i + 8) {
+            const flat = word.padEnd(total, ' ').slice(0, total);
+            return { ch: flat[i], done: true };
+          }
+          return { ch: CHARS[Math.floor(Math.random() * CHARS.length)], done: false };
+        })
+      );
+    }, 90);
+    return () => clearInterval(iv);
+  }, [rows, cols, word]);
+
+  return (
+    <div className="scramble-grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      {cells.map((c, i) => (
+        <span key={i} className={`scell${c.done ? ' done' : ''}`}>
+          {c.ch === ' ' ? '\u00A0' : c.ch}
+        </span>
+      ))}
+    </div>
+  );
+};
+
+export default ScrambleGrid;

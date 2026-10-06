@@ -1,0 +1,40 @@
+'use client';
+
+import { useState } from 'react';
+import './RippleButton.css';
+
+let seq = 0;
+
+const RippleButton = ({ children = 'Deploy', color = '#00F0FF', onClick }) => {
+  const [ripples, setRipples] = useState([]);
+
+  const fire = e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const d = Math.max(r.width, r.height) * 2;
+    const id = seq++;
+    const ripple = {
+      id,
+      size: d,
+      x: e.clientX - r.left - d / 2,
+      y: e.clientY - r.top - d / 2
+    };
+    setRipples(prev => [...prev, ripple]);
+    setTimeout(() => setRipples(prev => prev.filter(x => x.id !== id)), 650);
+    onClick?.(e);
+  };
+
+  return (
+    <button className="ripple-btn" style={{ '--ripple': color }} onClick={fire}>
+      <span className="ripple-label">{children}</span>
+      {ripples.map(r => (
+        <span
+          key={r.id}
+          className="ripple-wave"
+          style={{ width: r.size, height: r.size, left: r.x, top: r.y }}
+        />
+      ))}
+    </button>
+  );
+};
+
+export default RippleButton;

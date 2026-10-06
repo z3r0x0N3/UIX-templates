@@ -1,0 +1,56 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+import './GhostTrail.css';
+
+const GhostTrail = ({ length = 14, color = '#8A00FF' }) => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const zone = ref.current;
+    const dots = [];
+    for (let i = 0; i < length; i++) {
+      const d = document.createElement('div');
+      d.className = 'ghost-dot';
+      d.style.background = color;
+      zone.appendChild(d);
+      dots.push({ el: d, x: 0, y: 0 });
+    }
+    let mx = -100;
+    let my = -100;
+    let raf = 0;
+
+    const onMove = e => {
+      const r = zone.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    };
+
+    const tick = () => {
+      let x = mx;
+      let y = my;
+      dots.forEach((d, i) => {
+        d.x += (x - d.x) * 0.35;
+        d.y += (y - d.y) * 0.35;
+        const s = 1 - i / dots.length;
+        d.el.style.transform = `translate(${d.x}px, ${d.y}px) scale(${s})`;
+        d.el.style.opacity = s * 0.9;
+        x = d.x;
+        y = d.y;
+      });
+      raf = requestAnimationFrame(tick);
+    };
+
+    zone.addEventListener('mousemove', onMove);
+    raf = requestAnimationFrame(tick);
+    return () => {
+      zone.removeEventListener('mousemove', onMove);
+      cancelAnimationFrame(raf);
+      dots.forEach(d => d.el.remove());
+    };
+  }, [length, color]);
+
+  return <div ref={ref} className="ghost-zone"><span className="ghost-hint">move mouse here</span></div>;
+};
+
+export default GhostTrail;

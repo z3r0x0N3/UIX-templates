@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 34 real effects ([4]–[37]).
+Live UI animation templates — the 59 real effects ([4]–[62]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 34 effects play live, no build step:
+Open `gallery.html` in any browser — all 59 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -47,6 +47,31 @@ open gallery.html
 | 35 | `templates/Template-[35].txt` | FlowingMenu — edge-aware image marquee rows (full impl, live in gallery) | hover rows |
 | 36 | `templates/Template-[36].txt` | GlassIcons — gradient glass buttons, lift + shine (full impl, live in gallery) | hover buttons |
 | 37 | `templates/Template-[37].txt` | Carousel — spring drag, 3D tilt, autoplay loop (full impl, live in gallery) | drag · dots |
+| 38 | `templates/Template-[38].txt` | NeonSign — buzzing tube flicker, per-letter phase | auto-plays |
+| 39 | `templates/Template-[39].txt` | MatrixRain — falling katakana canvas | auto-plays |
+| 40 | `templates/Template-[40].txt` | AuroraMesh — drifting blurred gradient blobs | auto-plays |
+| 41 | `templates/Template-[41].txt` | Typewriter — auto-typing lines with caret | auto-plays |
+| 42 | `templates/Template-[42].txt` | RadarSweep — sweep flares blips | auto-plays |
+| 43 | `templates/Template-[43].txt` | Equalizer — dancing bars | auto-plays |
+| 44 | `templates/Template-[44].txt` | ConfettiBurst — physics confetti explosion | click to explode |
+| 45 | `templates/Template-[45].txt` | TiltCard — 3D tilt + glare | move mouse over card |
+| 46 | `templates/Template-[46].txt` | Marquee — infinite ticker | auto-plays |
+| 47 | `templates/Template-[47].txt` | FlipClock — countdown digits | auto-plays |
+| 48 | `templates/Template-[48].txt` | ProgressRing — SVG arc to 82% | auto-plays |
+| 49 | `templates/Template-[49].txt` | ParticleOrbit — bodies ring a core | auto-plays |
+| 50 | `templates/Template-[50].txt` | HologramCard — scanline flicker + EQ | auto-plays |
+| 51 | `templates/Template-[51].txt` | WordRotator — cycling headline | auto-plays |
+| 52 | `templates/Template-[52].txt` | SkeletonPulse — loading shimmer | auto-plays |
+| 53 | `templates/Template-[53].txt` | RippleButton — material ripple | click button |
+| 54 | `templates/Template-[54].txt` | GhostTrail — cursor trailer | move mouse over zone |
+| 55 | `templates/Template-[55].txt` | SevenSegClock — live LED time | auto-plays |
+| 56 | `templates/Template-[56].txt` | BatteryCharge — charge/discharge loop | auto-plays |
+| 57 | `templates/Template-[57].txt` | SignalPulse — radiating beacon | auto-plays |
+| 58 | `templates/Template-[58].txt` | OrbMenu — radial expanding menu | click core |
+| 59 | `templates/Template-[59].txt` | CardStack — hue-shifting stack | click to cycle |
+| 60 | `templates/Template-[60].txt` | ShimmerButton — sheen sweep + magnetic pull | hover / move mouse |
+| 61 | `templates/Template-[61].txt` | PrismText — hue-cycling gradient | auto-plays |
+| 62 | `templates/Template-[62].txt` | ScrambleGrid — settling cipher wall | auto-plays |
 
 ## Source
 

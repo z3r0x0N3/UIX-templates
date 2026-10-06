@@ -1,0 +1,44 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import './FlipClock.css';
+
+const pad = n => String(n).padStart(2, '0');
+
+const FlipDigit = ({ value }) => (
+  <div className="flip-digit" key={value}>
+    <div className="flip-top">{value}</div>
+    <div className="flip-bottom">{value}</div>
+    <div className="flip-leaf">{value}</div>
+  </div>
+);
+
+const FlipClock = ({ target = null }) => {
+  const [left, setLeft] = useState('--:--:--');
+
+  useEffect(() => {
+    const end = target ? new Date(target).getTime() : Date.now() + 1000 * 60 * 62;
+    const iv = setInterval(() => {
+      const ms = Math.max(0, end - Date.now());
+      const h = Math.floor(ms / 3600000);
+      const m = Math.floor((ms % 3600000) / 60000);
+      const s = Math.floor((ms % 60000) / 1000);
+      setLeft(`${pad(h)}:${pad(m)}:${pad(s)}`);
+    }, 250);
+    return () => clearInterval(iv);
+  }, [target]);
+
+  return (
+    <div className="flip-clock">
+      {left.split('').map((ch, i) =>
+        ch === ':' ? (
+          <span key={i} className="flip-colon">:</span>
+        ) : (
+          <FlipDigit key={i} value={ch} />
+        )
+      )}
+    </div>
+  );
+};
+
+export default FlipClock;

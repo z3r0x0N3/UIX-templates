@@ -1,0 +1,22 @@
+'use client';
+
+import './NeonSign.css';
+
+const NeonSign = ({ text = 'OPEN', color = '#00F0FF', flicker = true }) => {
+  return (
+    <div className="neon-wrap">
+      <div
+        className={`neon-sign${flicker ? ' flicker' : ''}`}
+        style={{ '--neon': color, color }}
+      >
+        {text.split('').map((ch, i) => (
+          <span key={i} className="neon-letter" style={{ animationDelay: `${(i * 0.37) % 4}s` }}>
+            {ch === ' ' ? '\u00A0' : ch}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default NeonSign;

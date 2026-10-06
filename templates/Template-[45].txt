@@ -1,0 +1,43 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import './TiltCard.css';
+
+const TiltCard = ({ children, max = 14, glare = true }) => {
+  const ref = useRef(null);
+  const [t, setT] = useState({ rx: 0, ry: 0, gx: 50, gy: 50 });
+
+  const onMove = e => {
+    const r = ref.current.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    setT({
+      rx: (0.5 - py) * max * 2,
+      ry: (px - 0.5) * max * 2,
+      gx: px * 100,
+      gy: py * 100
+    });
+  };
+
+  return (
+    <div className="tilt-scene">
+      <div
+        ref={ref}
+        className="tilt-card"
+        onMouseMove={onMove}
+        onMouseLeave={() => setT({ rx: 0, ry: 0, gx: 50, gy: 50 })}
+        style={{ transform: `rotateX(${t.rx}deg) rotateY(${t.ry}deg)` }}
+      >
+        {children}
+        {glare && (
+          <div
+            className="tilt-glare"
+            style={{ background: `radial-gradient(circle at ${t.gx}% ${t.gy}%, rgba(255,255,255,.25), transparent 60%)` }}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default TiltCard;

@@ -1,0 +1,67 @@
+'use client';
+
+import { useEffect, useRef } from 'react';
+
+const COLORS = ['#00F0FF', '#FF003C', '#FFD400', '#08A66C', '#8A00FF', '#FFFFFF'];
+
+const ConfettiBurst = ({ count = 120, gravity = 0.12 }) => {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    const ctx = canvas.getContext('2d');
+    let parts = [];
+    let raf = 0;
+
+    const burst = x => {
+      for (let i = 0; i < count; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const sp = 2 + Math.random() * 5;
+        parts.push({
+          x, y: 90,
+          vx: Math.cos(a) * sp,
+          vy: Math.sin(a) * sp - 2,
+          s: 2 + Math.random() * 4,
+          r: Math.random() * Math.PI,
+          vr: (Math.random() - 0.5) * 0.3,
+          c: COLORS[i % COLORS.length]
+        });
+      }
+      cancelAnimationFrame(raf);
+      tick();
+    };
+
+    const tick = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      parts = parts.filter(p => p.y < canvas.height + 10);
+      parts.forEach(p => {
+        p.vy += gravity;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.r += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+        ctx.restore();
+      });
+      if (parts.length) raf = requestAnimationFrame(tick);
+    };
+
+    const onClick = e => {
+      const r = canvas.getBoundingClientRect();
+      burst((e.clientX - r.left) * (canvas.width / r.width));
+    };
+    canvas.addEventListener('click', onClick);
+    burst(canvas.width / 2);
+    return () => {
+      canvas.removeEventListener('click', onClick);
+      cancelAnimationFrame(raf);
+    };
+  }, [count, gravity]);
+
+  return <canvas ref={ref} width={320} height={180} className="confetti-burst" />;
+};
+
+export default ConfettiBurst;

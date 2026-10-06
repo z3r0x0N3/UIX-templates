@@ -1,0 +1,30 @@
+'use client';
+
+import { useRef } from 'react';
+import './ShimmerButton.css';
+
+const ShimmerButton = ({ children = 'Launch', tint = '#8A00FF' }) => {
+  const ref = useRef(null);
+
+  const onMove = e => {
+    const r = ref.current.getBoundingClientRect();
+    ref.current.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    const pull = (e.clientX - r.left - r.width / 2) / r.width;
+    ref.current.style.transform = `translateX(${pull * 6}px)`;
+  };
+
+  return (
+    <button
+      ref={ref}
+      className="shimmer-btn"
+      style={{ '--tint': tint }}
+      onMouseMove={onMove}
+      onMouseLeave={() => (ref.current.style.transform = 'translateX(0)')}
+    >
+      <span className="shimmer-sheen" />
+      <span className="shimmer-label">{children}</span>
+    </button>
+  );
+};
+
+export default ShimmerButton;

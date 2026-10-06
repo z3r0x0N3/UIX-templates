@@ -1,0 +1,32 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import './Typewriter.css';
+
+const Typewriter = ({ lines = ['Hello, operator.', 'Systems nominal.', 'Awaiting input_'], speed = 55, pause = 1200 }) => {
+  const [text, setText] = useState('');
+  const [li, setLi] = useState(0);
+  const [ci, setCi] = useState(0);
+
+  useEffect(() => {
+    const line = lines[li % lines.length];
+    if (ci <= line.length) {
+      const t = setTimeout(() => {
+        setText(line.slice(0, ci));
+        setCi(ci + 1);
+      }, ci === line.length ? pause : speed);
+      return () => clearTimeout(t);
+    }
+    setCi(0);
+    setLi(li + 1);
+  }, [ci, li, lines, speed, pause]);
+
+  return (
+    <div className="typewriter">
+      <span>{text}</span>
+      <span className="tw-caret">▌</span>
+    </div>
+  );
+};
+
+export default Typewriter;

@@ -1,0 +1,47 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import './ProgressRing.css';
+
+const ProgressRing = ({ size = 120, stroke = 10, target = 0.82, color = '#00F0FF', track = 'rgba(255,255,255,.08)' }) => {
+  const [p, setP] = useState(0);
+  const R = (size - stroke) / 2;
+  const C = 2 * Math.PI * R;
+
+  useEffect(() => {
+    let raf = 0;
+    const t0 = performance.now();
+    const animate = now => {
+      const k = Math.min(1, (now - t0) / 1400);
+      const eased = 1 - Math.pow(1 - k, 3);
+      setP(target * eased);
+      if (k < 1) raf = requestAnimationFrame(animate);
+    };
+    raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+
+  return (
+    <div className="pring" style={{ width: size, height: size }}>
+      <svg width={size} height={size}>
+        <circle cx={size / 2} cy={size / 2} r={R} stroke={track} strokeWidth={stroke} fill="none" />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={R}
+          stroke={color}
+          strokeWidth={stroke}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          strokeDashoffset={C * (1 - p)}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          className="pring-arc"
+        />
+      </svg>
+      <div className="pring-label">{Math.round(p * 100)}%</div>
+    </div>
+  );
+};
+
+export default ProgressRing;
