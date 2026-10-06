@@ -188,11 +188,19 @@
   .eb2 canvas { position:absolute; left:-60px; top:-60px; pointer-events:none; }
   .eb2-content { position:relative; background:#10151d; border-radius:16px; padding:28px 24px; }
 
+  /* ── 33 PixelCard (faithful) ── */
+  .pxcard { position:relative; width:100%; min-height:210px; background:#0A0E14; border:1px solid #1e2a3a;
+    border-radius:10px; overflow:hidden; cursor:pointer; outline:none; }
+  .pxcard canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .pxcard-content { position:relative; padding:22px; pointer-events:none; }
+  .pxcard-content h3 { margin:0 0 6px; color:#f8fafc; }
+  .pxcard-content p { margin:0; font-size:12px; color:#8a97a8; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 29 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 30 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -288,6 +296,9 @@
 
 <section class="card"><h2>[32] ELECTRIC BORDER · CANVAS</h2><p class="src">Template-[32].txt · ElectricBorder — chaotic electric stroke on canvas (vs [11]'s conic-gradient edge)</p>
 <div class="stage"><div class="eb2" id="eborder2"><div class="eb2-content"><div>A glowing, animated border wrapper.</div><p style="margin:6px 0 0;opacity:.8">color #7df9ff · chaos 0.12 · noise stroke</p></div></div></section>
+
+<section class="card"><h2>[33] PIXEL CARD · FULL</h2><p class="src">Template-[33].txt · PixelCard — hover: pixels bloom from center, shimmer, recede on leave (vs [7]'s ambient shimmer)</p>
+<div class="stage" style="width:100%"><div class="pxcard" id="pxcard" tabindex="0"><div class="pxcard-content"><h3>Hover this card</h3><p>pixels appear · shimmer · disappear</p></div></div></div></section>
 
 </div>
 <script>
@@ -1844,6 +1855,92 @@ function ElectricBorder(el, o) {
 }
 (() => { const host = document.getElementById('eborder2'); if (!host) return;
   ElectricBorder(host, { color: '#7df9ff', speed: 1, chaos: 0.12, thickness: 2, borderRadius: 16 });
+})();
+// PixelCard core, vanilla port (full React source: templates/Template-[33].txt)
+class PxPixel {
+  constructor(canvas, ctx, x, y, color, speed, delay) {
+    this.width = canvas.width; this.height = canvas.height;
+    this.ctx = ctx; this.x = x; this.y = y; this.color = color;
+    this.speed = (0.1 + Math.random() * 0.8) * speed;
+    this.size = 0;
+    this.sizeStep = Math.random() * 0.4;
+    this.minSize = 0.5;
+    this.maxSize = 0.5 + Math.random() * 1.5;
+    this.delay = delay;
+    this.counter = 0;
+    this.counterStep = Math.random() * 4 + (this.width + this.height) * 0.01;
+    this.isIdle = false;
+    this.isReverse = false;
+    this.isShimmer = false;
+  }
+  draw() {
+    const off = 1 - this.size * 0.5;
+    this.ctx.fillStyle = this.color;
+    this.ctx.fillRect(this.x + off, this.y + off, this.size, this.size);
+  }
+  appear() {
+    this.isIdle = false;
+    if (this.counter <= this.delay) { this.counter += this.counterStep; return; }
+    if (this.size >= this.maxSize) this.isShimmer = true;
+    if (this.isShimmer) this.shimmer(); else this.size += this.sizeStep;
+    this.draw();
+  }
+  disappear() {
+    this.isShimmer = false;
+    this.counter = 0;
+    if (this.size <= 0) { this.isIdle = true; return; }
+    this.size -= 0.1;
+    this.draw();
+  }
+  shimmer() {
+    if (this.size >= this.maxSize) this.isReverse = true;
+    else if (this.size <= this.minSize) this.isReverse = false;
+    this.size += this.isReverse ? -this.speed : this.speed;
+  }
+}
+function PixelCard(el, o) {
+  o = Object.assign({ gap: 5, speed: 35, colors: '#f8fafc,#f1f5f9,#cbd5e1', noFocus: false }, o || {});
+  const canvas = document.createElement('canvas');
+  el.insertBefore(canvas, el.firstChild);
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const effSpeed = Math.min(100, Math.max(0, parseInt(o.speed, 10) || 0)) * (reduced ? 0 : 0.001);
+  let pxs = [], raf = null, prev = performance.now();
+  function init() {
+    const r = el.getBoundingClientRect();
+    const W = Math.floor(r.width), H = Math.floor(r.height);
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const palette = o.colors.split(',');
+    pxs = [];
+    for (let x = 0; x < W; x += o.gap) for (let y = 0; y < H; y += o.gap) {
+      const dx = x - W / 2, dy = y - H / 2;
+      pxs.push(new PxPixel(canvas, ctx, x, y,
+        palette[Math.random() * palette.length | 0], effSpeed, reduced ? 0 : Math.sqrt(dx * dx + dy * dy)));
+    }
+  }
+  function loop(fn) {
+    raf = requestAnimationFrame(() => loop(fn));
+    const now = performance.now();
+    if (now - prev < 1000 / 60) return;
+    prev = now;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let idle = true;
+    for (const p of pxs) { p[fn](); if (!p.isIdle) idle = false; }
+    if (idle) cancelAnimationFrame(raf);
+  }
+  function play(fn) { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => loop(fn)); }
+  el.addEventListener('mouseenter', () => play('appear'));
+  el.addEventListener('mouseleave', () => play('disappear'));
+  if (!o.noFocus) {
+    el.addEventListener('focus', () => play('appear'));
+    el.addEventListener('blur', () => play('disappear'));
+  }
+  new ResizeObserver(init).observe(el);
+  init();
+}
+(() => { const host = document.getElementById('pxcard'); if (!host) return;
+  PixelCard(host, { gap: 5, speed: 35, colors: '#f8fafc,#f1f5f9,#cbd5e1' });
 })();
 </script>
 </body>
