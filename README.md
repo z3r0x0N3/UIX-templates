@@ -1,6 +1,6 @@
 # UIX-templates
 
-Live UI animation templates — the 20 real effects ([4]–[23]).
+Live UI animation templates — the 21 real effects ([4]–[24]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
@@ -33,6 +33,7 @@ open gallery.html
 | 21 | `templates/Template-[21].txt` | BranchedMenu — tree menu with animated branch lines (working vanilla impl, live in gallery) | click groups / items |
 | 22 | `templates/Template-[22].txt` | StatusMark — progress ring, spin comet, draw-on states (working vanilla impl, live in gallery) | auto-plays |
 | 23 | `templates/Template-[23].txt` | LetterGlitch — glyph rain with smooth color fades (full impl, live in gallery) | auto-plays |
+| 24 | `templates/Template-[24].txt` | GridScan — perspective grid + ping-pong scan GLSL (full impl, live WebGL2 in gallery) | move mouse to tilt |
 
 ## Source
 
