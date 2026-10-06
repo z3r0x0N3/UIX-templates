@@ -1,0 +1,15 @@
+'use client';
+import { useState } from 'react';
+import './DiceRoll.css';
+const PIPS = { 1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8], 5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8] };
+const DiceRoll = () => {
+  const [v, setV] = useState(5);
+  const [tumbling, setTumbling] = useState(false);
+  const roll = () => { if (tumbling) return; setTumbling(true);
+    const iv = setInterval(() => setV(1 + Math.floor(Math.random() * 6)), 70);
+    setTimeout(() => { clearInterval(iv); setV(1 + Math.floor(Math.random() * 6)); setTumbling(false); }, 600); };
+  return <button onClick={roll} className={`die${tumbling ? ' tumbling' : ''}`}>
+    {Array.from({ length: 9 }, (_, i) => (
+      <i key={i} className={PIPS[v].includes(i) ? 'pip on' : 'pip'} />))}</button>;
+};
+export default DiceRoll;

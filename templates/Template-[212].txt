@@ -1,0 +1,10 @@
+'use client';
+import { useState } from 'react';
+import './AirplaneMode.css';
+const AirplaneMode = () => {
+  const [on, setOn] = useState(false);
+  return <button onClick={() => setOn(!on)} className={`airmode${on ? ' on' : ''}`}>
+    <span className="airmode-track"><span className="airmode-plane">✈</span>
+    <span className="airmode-trail" /></span><b>{on ? 'ON' : 'OFF'}</b></button>;
+};
+export default AirplaneMode;

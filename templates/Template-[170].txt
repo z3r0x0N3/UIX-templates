@@ -1,0 +1,7 @@
+'use client';
+import './WindmillSpin.css';
+const WindmillSpin = ({ dur = 7 }) => (
+  <div className="windmill"><div className="windmill-sails" style={{ animationDuration: `${dur}s` }}>
+    <i /><i /><i /><i /></div><div className="windmill-tower">▲</div></div>
+);
+export default WindmillSpin;

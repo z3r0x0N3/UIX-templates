@@ -1,0 +1,8 @@
+'use client';
+import './FireText.css';
+const FireText = ({ text = 'INFERNO' }) => (
+  <div className="firetext" data-text={text}>{text}
+    <span className="fire-embers"><i /><i /><i /><i /><i /></span>
+  </div>
+);
+export default FireText;

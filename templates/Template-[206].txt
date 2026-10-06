@@ -1,0 +1,13 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './StepDots.css';
+const StepDots = ({ steps = ['cart', 'ship', 'pay', 'done'] }) => {
+  const [i, setI] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setI(v => (v + 1) % (steps.length + 1)), 1400);
+    return () => clearInterval(iv); }, [steps.length]);
+  return <div className="stepdots">{steps.map((s, j) => (
+    <span key={s} className="stepdots-s">
+      <i className={`stepdots-d${j < i ? ' done' : j === i ? ' now' : ''}`}>{j < i ? '✓' : j + 1}</i>
+      <small>{s}</small>{j < steps.length - 1 && <em className={j < i ? 'done' : ''} />}</span>))}</div>;
+};
+export default StepDots;

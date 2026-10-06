@@ -1,0 +1,29 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './SimonPads.css';
+const SimonPads = () => {
+  const [seq, setSeq] = useState([0, 2, 1]);
+  const [lit, setLit] = useState(-1);
+  const [pos, setPos] = useState(0);
+  const [msg, setMsg] = useState('watch…');
+  useEffect(() => {
+    setMsg('watch…'); setPos(0);
+    seq.forEach((p, i) => setTimeout(() => {
+      setLit(p); setTimeout(() => setLit(-1), 320);
+      if (i === seq.length - 1) setTimeout(() => setMsg('your turn'), 420);
+    }, 600 + i * 520));
+  }, [seq]);
+  const press = i => {
+    setLit(i); setTimeout(() => setLit(-1), 200);
+    if (i === seq[pos]) {
+      if (pos + 1 === seq.length) {
+        setMsg('nice! +1'); setTimeout(() => setSeq(s => [...s, Math.floor(Math.random() * 4)]), 700);
+      } else setPos(pos + 1);
+    } else { setMsg('miss — replay'); setTimeout(() => setSeq(s => [...s]), 700); }
+  };
+  return <div className="simon"><div className="simon-msg">{msg} · len {seq.length}</div>
+    <div className="simon-grid">{[0, 1, 2, 3].map(i => (
+      <button key={i} onClick={() => press(i)}
+        className={`simon-p p${i}${lit === i ? ' lit' : ''}`}>{i + 1}</button>))}</div></div>;
+};
+export default SimonPads;

@@ -1,0 +1,9 @@
+'use client';
+import './OrbitDots.css';
+const OrbitDots = () => (
+  <div className="odot"><span className="odot-core" />
+    <span className="odot-o o1"><i /></span>
+    <span className="odot-o o2"><i /></span>
+    <span className="odot-o o3"><i /></span></div>
+);
+export default OrbitDots;

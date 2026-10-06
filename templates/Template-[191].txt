@@ -1,0 +1,13 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './InboxPing.css';
+const InboxPing = () => {
+  const [n, setN] = useState(2);
+  const [pop, setPop] = useState(0);
+  useEffect(() => { const iv = setInterval(() => {
+      setN(v => v + 1); setPop(p => p + 1);
+    }, 2600); return () => clearInterval(iv); }, []);
+  return <div className="inboxping" key={pop}><span className="inboxping-env">✉</span>
+    <span className="inboxping-n">{n}</span></div>;
+};
+export default InboxPing;

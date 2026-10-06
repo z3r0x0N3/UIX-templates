@@ -1,0 +1,4 @@
+'use client';
+import './ExitSign.css';
+const ExitSign = ({ text = 'EXIT →' }) => <div className="exitsign">{text}</div>;
+export default ExitSign;

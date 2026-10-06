@@ -1,0 +1,6 @@
+'use client';
+import './DotsBounce.css';
+const DotsBounce = ({ color = '#FF003C' }) => (
+  <div className="dbounce" style={{ '--db': color }}><i /><i /><i /></div>
+);
+export default DotsBounce;

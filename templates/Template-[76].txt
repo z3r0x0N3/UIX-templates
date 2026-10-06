@@ -1,0 +1,6 @@
+'use client';
+import './IceText.css';
+const IceText = ({ text = 'GLACIER' }) => (
+  <div className="icetext">{text}<span className="ice-sheen" /></div>
+);
+export default IceText;

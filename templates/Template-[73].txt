@@ -1,0 +1,25 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './CommandLine.css';
+const SCRIPT = [['$ deploy --prod', 'building… done in 1.2s'], ['$ status', '● all systems nominal']];
+const CommandLine = () => {
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    let alive = true, timers = [];
+    const run = () => {
+      setRows([]);
+      let t = 300;
+      SCRIPT.forEach(([cmd, out]) => {
+        timers.push(setTimeout(() => alive && setRows(r => [...r, { cmd }]), t)); t += 1100;
+        timers.push(setTimeout(() => alive && setRows(r => [...r.slice(0, -1), { cmd, out }]), t)); t += 900;
+      });
+      timers.push(setTimeout(() => alive && run(), t + 2200));
+    };
+    run();
+    return () => { alive = false; timers.forEach(clearTimeout); };
+  }, []);
+  return <div className="cmdline">{rows.map((r, i) => (
+    <div key={i}><div className="cmd-in">{r.cmd}<span className="tw-caret">▌</span></div>
+    {r.out && <div className="cmd-out">{r.out}</div>}</div>))}</div>;
+};
+export default CommandLine;

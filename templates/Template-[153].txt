@@ -1,0 +1,9 @@
+'use client';
+import './JellyPulse.css';
+const JellyPulse = ({ color = '#FF7AD9' }) => (
+  <div className="jelly" style={{ '--je': color }}>
+    <div className="jelly-bell" />
+    <div className="jelly-t">{Array.from({ length: 6 }, (_, i) => (
+      <i key={i} style={{ animationDelay: `${i * 0.18}s` }} />))}</div></div>
+);
+export default JellyPulse;

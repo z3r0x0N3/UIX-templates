@@ -1,0 +1,4 @@
+'use client';
+import './HourglassFlip.css';
+const HourglassFlip = () => <div className="hg-flip">⧗</div>;
+export default HourglassFlip;

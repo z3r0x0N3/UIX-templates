@@ -1,0 +1,23 @@
+'use client';
+import { useState } from 'react';
+import './SlotReels.css';
+const SYM = ['7', '◆', '●', '▲', '★', '■'];
+const SlotReels = () => {
+  const [reels, setReels] = useState(['7', '7', '7']);
+  const [spinning, setSpinning] = useState([false, false, false]);
+  const spin = () => {
+    setSpinning([true, true, true]);
+    const final = SYM.map(() => SYM[Math.floor(Math.random() * SYM.length)]);
+    const iv = setInterval(() => setReels(SYM.map(() => SYM[Math.floor(Math.random() * SYM.length)])), 80);
+    [500, 950, 1400].forEach((ms, i) => setTimeout(() => {
+      setReels(r => r.map((v, j) => (j === i ? final[i] : v)));
+      setSpinning(s => s.map((v, j) => (j === i ? false : v)));
+      if (i === 2) clearInterval(iv);
+    }, ms));
+  };
+  return <div className="slots"><div className="slots-reels">
+    {reels.map((s, i) => <span key={i} className={`slots-r${spinning[i] ? ' spin' : ''}`}>{s}</span>)}</div>
+    <button className="u-btn" onClick={spin}>spin</button>
+    {reels[0] === reels[1] && reels[1] === reels[2] && <div className="slots-win">JACKPOT</div>}</div>;
+};
+export default SlotReels;

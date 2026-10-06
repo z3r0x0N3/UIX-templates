@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+import './ThemeToggle.css';
+const ThemeToggle = () => {
+  const [night, setNight] = useState(false);
+  return <button onClick={() => setNight(!night)} className={`daynight${night ? ' night' : ''}`}
+    aria-label="toggle theme"><span className="dn-track">
+    <span className="dn-sun">☀</span><span className="dn-moon">☾</span>
+    <span className="dn-knob" /></span></button>;
+};
+export default ThemeToggle;

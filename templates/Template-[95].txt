@@ -1,0 +1,6 @@
+'use client';
+import './DoubleBounce.css';
+const DoubleBounce = ({ a = '#00F0FF', b = '#FF003C' }) => (
+  <div className="dbbl"><i style={{ background: a }} /><i style={{ background: b }} /></div>
+);
+export default DoubleBounce;

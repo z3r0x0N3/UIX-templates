@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './CompassNeedle.css';
+const CompassNeedle = () => {
+  const [deg, setDeg] = useState(0);
+  useEffect(() => { const iv = setInterval(() =>
+    setDeg(d => d + (Math.random() - 0.5) * 90), 1400);
+    return () => clearInterval(iv); }, []);
+  return <div className="compass"><span>N</span><span>E</span><span>S</span><span>W</span>
+    <div className="compass-needle" style={{ transform: `rotate(${deg}deg)` }} /></div>;
+};
+export default CompassNeedle;

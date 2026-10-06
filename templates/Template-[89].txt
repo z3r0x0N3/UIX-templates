@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+import './MuteToggle.css';
+const MuteToggle = () => {
+  const [muted, setMuted] = useState(false);
+  return <button onClick={() => setMuted(!muted)} className={`mutet${muted ? ' off' : ''}`}>
+    <span className="mutet-cone">◣</span>
+    <span className="mutet-waves"><i /><i /><i /></span>
+    <span className="mutet-slash" /></button>;
+};
+export default MuteToggle;

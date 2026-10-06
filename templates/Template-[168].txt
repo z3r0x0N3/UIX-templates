@@ -1,0 +1,11 @@
+'use client';
+import './FerrisSpin.css';
+const FerrisSpin = ({ cabins = 6, dur = 18 }) => (
+  <div className="ferris"><div className="ferris-wheel" style={{ animationDuration: `${dur}s` }}>
+    {Array.from({ length: cabins }, (_, i) => (
+      <span key={i} className="ferris-c"
+        style={{ transform: `rotate(${i * (360 / cabins)}deg) translateY(-62px)` }}>
+        <i style={{ animationDuration: `${dur}s` }}>⛺</i></span>))}
+  </div><div className="ferris-legs">⋀</div></div>
+);
+export default FerrisSpin;

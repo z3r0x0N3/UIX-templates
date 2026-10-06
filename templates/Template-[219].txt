@@ -1,0 +1,6 @@
+'use client';
+import './SaleBurst.css';
+const SaleBurst = ({ text = 'SALE −50%' }) => (
+  <div className="saleburst"><span className="saleburst-seal" /><b>{text}</b></div>
+);
+export default SaleBurst;

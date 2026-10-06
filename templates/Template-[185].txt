@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './QrFlicker.css';
+const QrFlicker = ({ n = 12, seed = 1 }) => {
+  const [s, setS] = useState(seed);
+  const rnd = i => { const x = Math.sin(s * 999 + i * 77) * 10000; return x - Math.floor(x); };
+  return <div className="qrflick" onMouseEnter={() => setS(x => x + 1)}
+    style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}>
+    {Array.from({ length: n * n }, (_, i) => (
+      <i key={i} className={rnd(i) > 0.48 ? 'on' : ''} style={{ animationDelay: `${(i % n) * 0.09}s` }} />))}</div>;
+};
+export default QrFlicker;

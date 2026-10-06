@@ -1,0 +1,7 @@
+'use client';
+import './LighthouseBeam.css';
+const LighthouseBeam = () => (
+  <div className="lighthouse"><div className="lighthouse-beam" />
+    <div className="lighthouse-tower">▲</div><div className="lighthouse-sea" /></div>
+);
+export default LighthouseBeam;

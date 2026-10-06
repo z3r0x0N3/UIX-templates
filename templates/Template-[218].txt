@@ -1,0 +1,7 @@
+'use client';
+import './PriceTag.css';
+const PriceTag = ({ price = '$19' }) => (
+  <div className="pricetag"><span className="pricetag-string" />
+    <span className="pricetag-card"><i />{price}</span></div>
+);
+export default PriceTag;

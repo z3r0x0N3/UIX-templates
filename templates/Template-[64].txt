@@ -1,0 +1,15 @@
+'use client';
+import { useRef } from 'react';
+import './ShadowStack.css';
+const ShadowStack = ({ text = 'DEPTH', layers = 14 }) => {
+  const ref = useRef(null);
+  const onMove = e => {
+    const r = ref.current.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width / 2) / r.width;
+    const dy = (e.clientY - r.top - r.height / 2) / r.height;
+    ref.current.style.setProperty('--sx', `${-dx * layers}px`);
+    ref.current.style.setProperty('--sy', `${-dy * layers}px`);
+  };
+  return <div ref={ref} className="sstack" data-text={text} onMouseMove={onMove}>{text}</div>;
+};
+export default ShadowStack;

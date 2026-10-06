@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+import './NewtonCradle.css';
+const NewtonCradle = () => {
+  const [swinging, setSwinging] = useState(false);
+  return <button onClick={() => { setSwinging(false); requestAnimationFrame(() => requestAnimationFrame(() => setSwinging(true))); }}
+    className={`cradle${swinging ? ' go' : ''}`} aria-label="swing cradle">
+    <span className="cradle-bar" />
+    {[0, 1, 2, 3, 4].map(i => <span key={i} className={`cradle-b b${i}`} />)}</button>;
+};
+export default NewtonCradle;

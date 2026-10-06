@@ -1,0 +1,7 @@
+'use client';
+import './SlideButton.css';
+const SlideButton = ({ children = 'Continue' }) => (
+  <button className="slidebtn"><span className="slidebtn-t">{children}</span>
+    <span className="slidebtn-a">→</span></button>
+);
+export default SlideButton;

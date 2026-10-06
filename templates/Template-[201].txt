@@ -1,0 +1,7 @@
+'use client';
+import './LocationPin.css';
+const LocationPin = ({ label = 'HW lab' }) => (
+  <div className="pindrop"><div className="pindrop-pin">📍</div>
+    <div className="pindrop-ring" /><div className="pindrop-label">{label}</div></div>
+);
+export default LocationPin;

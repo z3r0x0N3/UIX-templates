@@ -1,0 +1,8 @@
+'use client';
+import './SwingText.css';
+const SwingText = ({ text = 'DANGLE', step = 0.14 }) => (
+  <div className="swtext">{[...text].map((ch, i) => (
+    <span key={i} className="u-letter swtext-l"
+      style={{ animationDelay: `${i * step}s` }}>{ch}</span>))}</div>
+);
+export default SwingText;

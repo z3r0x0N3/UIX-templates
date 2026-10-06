@@ -1,0 +1,7 @@
+'use client';
+import './TapeCard.css';
+const TapeCard = ({ caption = 'field notes' }) => (
+  <div className="tapecard"><span className="tape t1" /><span className="tape t2" />
+    <div className="tapecard-photo">◈</div><div className="tapecard-cap">{caption}</div></div>
+);
+export default TapeCard;

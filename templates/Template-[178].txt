@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './ThermometerFill.css';
+const ThermometerFill = () => {
+  const [t, setT] = useState(18);
+  useEffect(() => { const iv = setInterval(() =>
+    setT(8 + Math.random() * 30), 1800); return () => clearInterval(iv); }, []);
+  return <div className="thermo"><div className="thermo-tube">
+    <div className="thermo-merc" style={{ height: `${(t / 40) * 100}%` }} /></div>
+    <div className="thermo-bulb" /><div className="thermo-t">{t.toFixed(1)}°</div></div>;
+};
+export default ThermometerFill;

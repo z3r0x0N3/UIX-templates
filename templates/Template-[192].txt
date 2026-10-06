@@ -1,0 +1,6 @@
+'use client';
+import './TypingDots.css';
+const TypingDots = () => (
+  <div className="tdots"><i /><i /><i /></div>
+);
+export default TypingDots;

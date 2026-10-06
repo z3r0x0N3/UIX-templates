@@ -1,0 +1,7 @@
+'use client';
+import './BounceBall.css';
+const BounceBall = ({ color = '#FF003C' }) => (
+  <div className="gbounce"><span className="gbounce-shadow" />
+    <span className="gbounce-ball" style={{ background: color }} /></div>
+);
+export default BounceBall;

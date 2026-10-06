@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './VolumeKnob.css';
+const VolumeKnob = () => {
+  const [v, setV] = useState(4);
+  return <button onClick={() => setV((v + 2) % 12)} className="volknob" aria-label="volume">
+    <span className="volknob-dial" style={{ transform: `rotate(${-135 + (v / 10) * 270}deg)` }} />
+    <span className="volknob-ticks">{Array.from({ length: 11 }, (_, i) => (
+      <i key={i} className={i <= v ? 'on' : ''} style={{ transform: `rotate(${-135 + i * 27}deg) translateY(-30px)` }} />))}</span>
+    <b>{v * 10}</b></button>;
+};
+export default VolumeKnob;

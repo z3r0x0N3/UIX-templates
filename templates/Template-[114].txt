@@ -1,0 +1,19 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './StatCounter.css';
+const StatCounter = ({ stats = [['uptime', 99.9, '%'], ['tools', 209, ''], ['mcps', 21, '']] }) => {
+  const [k, setK] = useState(0);
+  const [vals, setVals] = useState(stats.map(() => 0));
+  useEffect(() => {
+    let raf = 0; const t0 = performance.now();
+    const step = n => { const t = Math.min(1, (n - t0) / 1200);
+      setVals(stats.map(([_, v]) => v * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+    const iv = setInterval(() => setK(x => x + 1), 3600);
+    return () => { cancelAnimationFrame(raf); clearInterval(iv); };
+  }, [k]);
+  return <div className="statcount">{stats.map(([label, , unit], i) => (
+    <div key={label} className="statcount-s"><b>{vals[i].toFixed(label === 'uptime' ? 1 : 0)}{unit}</b><span>{label}</span></div>))}</div>;
+};
+export default StatCounter;

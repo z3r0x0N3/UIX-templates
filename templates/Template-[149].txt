@@ -1,0 +1,37 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const PIECES = [[[1,1,1,1]], [[1,1],[1,1]], [[0,1,0],[1,1,1]], [[1,1,0],[0,1,1]]];
+const TetrisDrop = ({ cols = 10, cell = 16 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const rows = Math.floor(c.height / cell);
+    let grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+    let piece = null, py = 0, px = 3, color = 0;
+    const COLORS = ['#00F0FF', '#FFD400', '#8A00FF', '#08A66C'];
+    const spawn = () => { piece = PIECES[Math.floor(Math.random() * PIECES.length)];
+      color = Math.floor(Math.random() * COLORS.length); px = 3; py = -piece.length; };
+    spawn();
+    let raf = 0, acc = 0, last = 0;
+    const tick = n => { acc += n - last; last = n;
+      if (acc > 320) { acc = 0; py++;
+        const hit = piece.some((row, r) => row.some((v, cc) =>
+          v && (py + r >= rows || (py + r >= 0 && grid[py + r][px + cc]))));
+        if (hit) { py--;
+          piece.forEach((row, r) => row.forEach((v, cc) => {
+            if (v && py + r >= 0) grid[py + r][px + cc] = color + 1; }));
+          if (py <= 0) grid = Array.from({ length: rows }, () => Array(cols).fill(0));
+          spawn(); } }
+      x.fillStyle = '#05080e'; x.fillRect(0, 0, c.width, c.height);
+      grid.forEach((row, r) => row.forEach((v, cc) => {
+        if (!v) return; x.fillStyle = COLORS[v - 1]; x.fillRect(cc * cell + 1, r * cell + 1, cell - 2, cell - 2); }));
+      piece.forEach((row, r) => row.forEach((v, cc) => {
+        if (!v || py + r < 0) return; x.fillStyle = COLORS[color];
+        x.fillRect((px + cc) * cell + 1, (py + r) * cell + 1, cell - 2, cell - 2); }));
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return <canvas ref={ref} width={320} height={180} className="fx-tetris" />;
+};
+export default TetrisDrop;

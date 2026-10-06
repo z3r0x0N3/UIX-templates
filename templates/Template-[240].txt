@@ -1,0 +1,14 @@
+'use client';
+import { useState } from 'react';
+import './PoolBreak.css';
+const PoolBreak = () => {
+  const [n, setN] = useState(0);
+  const [scattered, setScattered] = useState(false);
+  const brk = () => { setScattered(false); setN(x => x + 1);
+    requestAnimationFrame(() => requestAnimationFrame(() => setScattered(true))); };
+  return <button onClick={brk} className="pooltable" key={n}>
+    <span className="cueball" />
+    {Array.from({ length: 6 }, (_, i) => (
+      <span key={i} className={`poolball b${i}${scattered ? ' out' : ''}`} style={{ '--d': `${i * 60}deg` }}>{i + 1}</span>))}</button>;
+};
+export default PoolBreak;

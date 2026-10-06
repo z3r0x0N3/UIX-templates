@@ -1,0 +1,12 @@
+'use client';
+import './DpadPad.css';
+const DpadPad = ({ onPress }) => {
+  const press = d => onPress?.(d);
+  return <div className="dpad">
+    <button className="dpad-b up" onClick={() => press('up')}>▲</button>
+    <button className="dpad-b lf" onClick={() => press('left')}>◀</button>
+    <button className="dpad-b rt" onClick={() => press('right')}>▶</button>
+    <button className="dpad-b dn" onClick={() => press('down')}>▼</button>
+    <span className="dpad-c" /></div>;
+};
+export default DpadPad;

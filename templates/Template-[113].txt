@@ -1,0 +1,7 @@
+'use client';
+import './ProfileChip.css';
+const ProfileChip = ({ name = 'operator', status = 'online' }) => (
+  <div className="pchip"><span className="pchip-av">◉<i className={`pchip-dot ${status}`} /></span>
+    <span className="pchip-meta"><b>{name}</b><small>{status}</small></span></div>
+);
+export default ProfileChip;

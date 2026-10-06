@@ -1,0 +1,11 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './OdometerRoll.css';
+const OdometerRoll = ({ digits = 6 }) => {
+  const [v, setV] = useState(42137);
+  useEffect(() => { const iv = setInterval(() => setV(x => x + 1 + Math.floor(Math.random() * 7)), 700);
+    return () => clearInterval(iv); }, []);
+  return <div className="odo">{String(v).padStart(digits, '0').split('').map((d, i) => (
+    <span key={`${i}-${d}`} className="odo-d">{d}</span>))}</div>;
+};
+export default OdometerRoll;

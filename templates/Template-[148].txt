@@ -1,0 +1,8 @@
+'use client';
+import './PacChomp.css';
+const PacChomp = () => (
+  <div className="pacrun"><div className="pac-dots">
+    {Array.from({ length: 12 }, (_, i) => <i key={i} style={{ animationDelay: `${i * 0.18}s` }} />)}
+    </div><div className="pac" /></div>
+);
+export default PacChomp;

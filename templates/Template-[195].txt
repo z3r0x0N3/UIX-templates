@@ -1,0 +1,9 @@
+'use client';
+import { useState } from 'react';
+import './StoryRing.css';
+const StoryRing = () => {
+  const [seen, setSeen] = useState(false);
+  return <button onClick={() => setSeen(!seen)} className={`storyring${seen ? ' seen' : ''}`}>
+    <span className="storyring-av">◉</span></button>;
+};
+export default StoryRing;

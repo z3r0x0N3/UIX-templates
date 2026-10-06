@@ -1,0 +1,7 @@
+'use client';
+import './DnaSpin.css';
+const DnaSpin = ({ rungs = 7 }) => (
+  <div className="dnaspin">{Array.from({ length: rungs }, (_, i) => (
+    <span key={i} className="dnaspin-r" style={{ animationDelay: `${i * 0.12}s` }}><i /><i /></span>))}</div>
+);
+export default DnaSpin;

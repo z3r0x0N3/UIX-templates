@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './VaultDial.css';
+const VaultDial = () => {
+  const [rot, setRot] = useState(0);
+  const [n, setN] = useState(0);
+  const spin = () => { setRot(r => r + 180 + Math.floor(Math.random() * 540)); setN(Math.floor(Math.random() * 100)); };
+  return <div className="vaultdial"><div className="vaultdial-ring" style={{ transform: `rotate(${rot}deg)` }}>
+    {Array.from({ length: 20 }, (_, i) => <i key={i} style={{ transform: `rotate(${i * 18}deg)` }} />)}
+    <b>{n}</b></div><button className="u-btn" onClick={spin}>spin</button></div>;
+};
+export default VaultDial;

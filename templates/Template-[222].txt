@@ -1,0 +1,6 @@
+'use client';
+import './ShieldPulse.css';
+const ShieldPulse = () => (
+  <div className="shieldpulse"><span className="shieldpulse-ring" /><span className="shieldpulse-core">🛡</span></div>
+);
+export default ShieldPulse;

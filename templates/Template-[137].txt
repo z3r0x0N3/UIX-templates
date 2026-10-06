@@ -1,0 +1,11 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './BreathPacer.css';
+const BreathPacer = () => {
+  const [inhale, setInhale] = useState(true);
+  useEffect(() => { const iv = setInterval(() => setInhale(v => !v), 4000);
+    return () => clearInterval(iv); }, []);
+  return <div className={`breath${inhale ? ' in' : ''}`}>
+    <span>{inhale ? 'inhale' : 'exhale'}</span></div>;
+};
+export default BreathPacer;

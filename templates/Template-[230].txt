@@ -1,0 +1,15 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './PiggyFill.css';
+const PiggyFill = () => {
+  const [fill, setFill] = useState(0);
+  const [coin, setCoin] = useState(0);
+  useEffect(() => { const iv = setInterval(() => {
+      setCoin(c => c + 1); setFill(f => (f >= 10 ? 0 : f + 1));
+    }, 700); return () => clearInterval(iv); }, []);
+  return <div className="piggy"><div className="piggy-coins" key={coin}>
+    <span className="piggy-coin">◉</span></div>
+    <div className="piggy-body">🐖<span className="piggy-fill" style={{ height: `${fill * 9}%` }} /></div>
+    <div className="u-dim">{fill * 10}¢ saved</div></div>;
+};
+export default PiggyFill;

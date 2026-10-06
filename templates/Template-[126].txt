@@ -1,0 +1,7 @@
+'use client';
+import './FogBanks.css';
+const FogBanks = () => (
+  <div className="fogfield"><div className="fog f1" /><div className="fog f2" />
+    <div className="fog-sign">SIGNAL LOST</div></div>
+);
+export default FogBanks;

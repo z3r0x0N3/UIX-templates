@@ -1,0 +1,6 @@
+'use client';
+import './TrophyShine.css';
+const TrophyShine = () => (
+  <div className="trophy">🏆<span className="trophy-sheen" /></div>
+);
+export default TrophyShine;

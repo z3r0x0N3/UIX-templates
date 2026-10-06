@@ -1,0 +1,24 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const GlobeSpin = ({ dots = 220 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const P = Array.from({ length: dots }, () => {
+      const u = Math.random() * 2 - 1, a = Math.random() * 6.28, s = Math.sqrt(1 - u * u);
+      return { x: s * Math.cos(a), y: s * Math.sin(a), z: u }; });
+    let raf = 0, rot = 0;
+    const tick = () => { rot += 0.008;
+      x.fillStyle = '#04060c'; x.fillRect(0, 0, c.width, c.height);
+      P.forEach(p => { const xr = p.x * Math.cos(rot) - p.z * Math.sin(rot);
+        const zr = p.x * Math.sin(rot) + p.z * Math.cos(rot);
+        if (zr < -0.15) return;
+        x.fillStyle = `rgba(0,240,255,${0.25 + 0.75 * (zr + 1) / 2})`;
+        x.fillRect(160 + xr * 62, 90 + p.y * 62, 1.8, 1.8); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [dots]);
+  return <canvas ref={ref} width={320} height={180} className="fx-globe" />;
+};
+export default GlobeSpin;

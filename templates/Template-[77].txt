@@ -1,0 +1,4 @@
+'use client';
+import './GoldText.css';
+const GoldText = ({ text = 'AURUM' }) => <div className="goldtext">{text}</div>;
+export default GoldText;

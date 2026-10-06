@@ -1,0 +1,8 @@
+'use client';
+import './TagCloud.css';
+const TagCloud = ({ tags = ['voice', 'mcp', 'rag', 'bdh', 'stl', 'vault', 'agent'] }) => (
+  <div className="tagcloud">{tags.map((t, i) => (
+    <span key={t} className="tagcloud-t"
+      style={{ animationDuration: `${3 + (i % 4)}s`, animationDelay: `${-i * 0.7}s` }}>{t}</span>))}</div>
+);
+export default TagCloud;

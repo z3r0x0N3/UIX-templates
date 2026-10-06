@@ -1,0 +1,9 @@
+'use client';
+import { useState } from 'react';
+import './MenuBurger.css';
+const MenuBurger = () => {
+  const [open, setOpen] = useState(false);
+  return <button onClick={() => setOpen(!open)} className={`burger${open ? ' open' : ''}`}
+    aria-label="menu" aria-expanded={open}><i /><i /><i /></button>;
+};
+export default MenuBurger;

@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+import './RadioPulse.css';
+const RadioPulse = ({ options = ['Alpha', 'Beta', 'Gamma'], color = '#8A00FF' }) => {
+  const [v, setV] = useState(0);
+  return <div className="rpulse" style={{ '--rp': color }} role="radiogroup">
+    {options.map((o, i) => (
+      <button key={o} role="radio" aria-checked={v === i} onClick={() => setV(i)}
+        className={`rpulse-o${v === i ? ' on' : ''}`}><span className="rpulse-dot" />{o}</button>))}</div>;
+};
+export default RadioPulse;

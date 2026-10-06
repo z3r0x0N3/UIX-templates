@@ -1,0 +1,8 @@
+'use client';
+import './AvatarStack.css';
+const AvatarStack = ({ users = ['A', 'B', 'C', 'D'], extra = 9 }) => (
+  <div className="avstack">{users.map((u, i) => (
+    <span key={u} className="avstack-a" style={{ '--i': i, background: `hsl(${i * 70}, 70%, 45%)` }}>{u}</span>))}
+    <span className="avstack-a more" style={{ '--i': users.length }}>+{extra}</span></div>
+);
+export default AvatarStack;

@@ -1,0 +1,7 @@
+'use client';
+import './FingerprintScan.css';
+const FingerprintScan = () => (
+  <div className="fpscan"><div className="fpscan-print">≋</div>
+    <div className="fpscan-laser" /><div className="fpscan-tag">MATCH ✓</div></div>
+);
+export default FingerprintScan;

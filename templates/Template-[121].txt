@@ -1,0 +1,22 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const EmberRise = ({ embers = 40 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const spawn = () => ({ x: 40 + Math.random() * (c.width - 80), y: c.height + 6,
+      v: 0.5 + Math.random() * 1.2, sw: Math.random() * 6.28, s: 1 + Math.random() * 2.2, life: 1 });
+    const P = Array.from({ length: embers }, spawn);
+    let raf = 0;
+    const tick = () => { x.fillStyle = 'rgba(12,5,2,0.3)'; x.fillRect(0, 0, c.width, c.height);
+      P.forEach((p, i) => { p.y -= p.v; p.sw += 0.03; p.x += Math.sin(p.sw) * 0.6; p.life -= 0.004;
+        if (p.life <= 0 || p.y < -8) P[i] = spawn();
+        x.fillStyle = `rgba(255,${90 + Math.floor(110 * p.life)},20,${p.life})`;
+        x.beginPath(); x.arc(p.x, p.y, p.s, 0, 6.29); x.fill(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [embers]);
+  return <canvas ref={ref} width={320} height={180} className="fx-ember" />;
+};
+export default EmberRise;

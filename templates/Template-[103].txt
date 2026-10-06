@@ -1,0 +1,8 @@
+'use client';
+import './FlipTile.css';
+const FlipTile = ({ front = 'FRONT', back = 'BACK' }) => (
+  <div className="fliptile"><div className="fliptile-in">
+    <div className="fliptile-f">{front}</div><div className="fliptile-b">{back}</div>
+  </div></div>
+);
+export default FlipTile;

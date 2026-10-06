@@ -1,0 +1,7 @@
+'use client';
+import './PinwheelSpin.css';
+const PinwheelSpin = () => (
+  <div className="pinwheel"><div className="pinwheel-rotor"><i /><i /><i /><i /></div>
+    <div className="pinwheel-stick" /></div>
+);
+export default PinwheelSpin;

@@ -1,0 +1,17 @@
+'use client';
+import { useState } from 'react';
+import './RocketLaunch.css';
+const RocketLaunch = () => {
+  const [phase, setPhase] = useState('idle');
+  const launch = () => {
+    if (phase !== 'idle') return;
+    setPhase('fire'); setTimeout(() => setPhase('fly'), 700);
+    setTimeout(() => setPhase('gone'), 2600);
+    setTimeout(() => setPhase('idle'), 4200);
+  };
+  return <button onClick={launch} className={`rocketpad p-${phase}`}>
+    <span className="rocketpad-ground" /><span className="rocket">🚀</span>
+    <span className="rocket-exhaust" /><span className="rocket-msg">{
+      { idle: 'click to launch', fire: 'ignition…', fly: 'liftoff!', gone: '…' }[phase]}</span></button>;
+};
+export default RocketLaunch;

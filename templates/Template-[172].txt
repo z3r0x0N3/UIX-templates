@@ -1,0 +1,4 @@
+'use client';
+import './TopSpin.css';
+const TopSpin = () => <div className="spintop">🌀</div>;
+export default TopSpin;

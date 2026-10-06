@@ -1,0 +1,11 @@
+'use client';
+import './DotMatrix.css';
+const DotMatrix = ({ rows = 8, cols = 16 }) => (
+  <div className="dotmatrix" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    {Array.from({ length: rows * cols }, (_, i) => {
+      const r = Math.floor(i / cols), c = i % cols;
+      return <i key={i} className="dotmatrix-d"
+        style={{ animationDelay: `${(r + c) * 0.08}s` }} />; })}
+  </div>
+);
+export default DotMatrix;

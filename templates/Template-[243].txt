@@ -1,0 +1,6 @@
+'use client';
+import './YoYoDrop.css';
+const YoYoDrop = () => (
+  <div className="yoyo"><div className="yoyo-string" /><div className="yoyo-body">◎</div></div>
+);
+export default YoYoDrop;

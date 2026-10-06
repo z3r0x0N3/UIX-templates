@@ -1,0 +1,23 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const ContourMarch = ({ rings = 9 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    let raf = 0;
+    const tick = () => { x.fillStyle = '#071009'; x.fillRect(0, 0, c.width, c.height);
+      const t = Date.now() / 900, cx = c.width / 2, cy = c.height / 2;
+      for (let i = 0; i < rings; i++) {
+        const k = ((i + t) % rings) / rings;
+        x.strokeStyle = `rgba(8,166,108,${0.15 + 0.65 * (1 - k)})`;
+        x.lineWidth = 1.5;
+        x.beginPath();
+        x.ellipse(cx, cy, 12 + k * 150, 8 + k * 84, 0, 0, 6.29);
+        x.stroke(); }
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [rings]);
+  return <canvas ref={ref} width={320} height={180} className="fx-contour" />;
+};
+export default ContourMarch;

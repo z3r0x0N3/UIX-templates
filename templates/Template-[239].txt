@@ -1,0 +1,7 @@
+'use client';
+import './BowlingRoll.css';
+const BowlingRoll = () => (
+  <div className="bowling"><div className="bowling-ball">●</div>
+    <div className="bowling-pins"><i>♙</i><i>♙</i><i>♙</i></div></div>
+);
+export default BowlingRoll;

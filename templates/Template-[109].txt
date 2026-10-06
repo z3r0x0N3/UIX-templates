@@ -1,0 +1,7 @@
+'use client';
+import './StampCard.css';
+const StampCard = ({ word = 'APPROVED', color = '#FF003C' }) => (
+  <div className="stampcard"><div className="stampcard-doc">invoice #0042</div>
+    <div className="stamp" style={{ '--st': color }}>{word}</div></div>
+);
+export default StampCard;

@@ -1,0 +1,6 @@
+'use client';
+import './ShimmerBar.css';
+const ShimmerBar = ({ color = '#00F0FF' }) => (
+  <div className="indet"><span className="indet-fill" style={{ background: color }} /></div>
+);
+export default ShimmerBar;

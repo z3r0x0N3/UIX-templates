@@ -1,0 +1,16 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './InvaderMarch.css';
+const InvaderMarch = ({ cols = 8, rows = 3 }) => {
+  const [t, setT] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setT(v => v + 1), 420);
+    return () => clearInterval(iv); }, []);
+  const dx = (t % 12) - 6, dy = Math.floor(t / 12) % 3;
+  const frame = Math.floor(t / 2) % 2;
+  return <div className="invaders">
+    {Array.from({ length: rows }, (_, r) => (
+      <div key={r} className="invader-row" style={{ transform: `translateX(${dx * 8}px) translateY(${dy * 10}px)` }}>
+        {Array.from({ length: cols }, (_, c) => (
+          <span key={c} className="invader">{frame ? '👾' : '👽'}</span>))}</div>))}</div>;
+};
+export default InvaderMarch;

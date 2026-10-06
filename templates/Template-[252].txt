@@ -1,0 +1,8 @@
+'use client';
+import './VolcanoPuff.css';
+const VolcanoPuff = () => (
+  <div className="volcano"><div className="volcano-cone">▲</div>
+    <div className="volcano-puffs"><i /><i /><i /><i /><i /><i /><i /></div>
+    <div className="volcano-lava" /></div>
+);
+export default VolcanoPuff;

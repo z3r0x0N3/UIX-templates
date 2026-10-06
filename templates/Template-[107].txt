@@ -1,0 +1,6 @@
+'use client';
+import './CornerFold.css';
+const CornerFold = ({ children = 'Hover the corner →' }) => (
+  <div className="cfold">{children}<span className="cfold-ear" /></div>
+);
+export default CornerFold;

@@ -1,0 +1,24 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const LavaLamp = ({ blobs = 7 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const B = Array.from({ length: blobs }, () => ({
+      x: 60 + Math.random() * 200, y: 40 + Math.random() * 120,
+      r: 10 + Math.random() * 16, vy: -(0.2 + Math.random() * 0.5),
+      w: Math.random() * 6.28, hot: Math.random() }));
+    let raf = 0;
+    const tick = () => { x.fillStyle = '#160a04'; x.fillRect(0, 0, c.width, c.height);
+      B.forEach(b => { b.y += b.vy; b.w += 0.02; b.x += Math.sin(b.w) * 0.8;
+        if (b.y < 12) { b.y = 168; b.x = 60 + Math.random() * 200; }
+        const g = x.createRadialGradient(b.x, b.y, 1, b.x, b.y, b.r);
+        g.addColorStop(0, '#FFD23F'); g.addColorStop(0.55, '#FF5A1F'); g.addColorStop(1, 'rgba(255,60,10,0)');
+        x.fillStyle = g; x.beginPath(); x.arc(b.x, b.y, b.r, 0, 6.29); x.fill(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [blobs]);
+  return <canvas ref={ref} width={320} height={180} className="fx-lava" />;
+};
+export default LavaLamp;

@@ -1,0 +1,11 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './WifiSignal.css';
+const WifiSignal = () => {
+  const [s, setS] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setS(v => (v + 1) % 5), 700);
+    return () => clearInterval(iv); }, []);
+  return <div className="wifisig"><span className="wifisig-dot on" />
+    {[1, 2, 3, 4].map(i => <i key={i} className={`wifisig-a a${i}${s >= i ? ' on' : ''}`} />)}</div>;
+};
+export default WifiSignal;

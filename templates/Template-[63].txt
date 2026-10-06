@@ -1,0 +1,12 @@
+'use client';
+import './GlitchWall.css';
+const ROWS = ['SIGNAL', 'NOISE', 'STATIC', 'VOID'];
+const GlitchWall = ({ color = '#00F0FF', accent = '#FF003C' }) => (
+  <div className="gwall">
+    {ROWS.map((r, i) => (
+      <div key={r} className="gwall-row" data-text={r}
+        style={{ '--gc': i % 2 ? accent : color, animationDelay: `${i * 0.53}s` }}>{r}</div>
+    ))}
+  </div>
+);
+export default GlitchWall;

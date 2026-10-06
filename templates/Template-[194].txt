@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+import './CallPulse.css';
+const CallPulse = ({ who = '◉' }) => {
+  const [answered, setAnswered] = useState(false);
+  return <button onClick={() => setAnswered(true)} className={`callpulse${answered ? ' answered' : ''}`}>
+    <span className="callpulse-ring r1" /><span className="callpulse-ring r2" />
+    <span className="callpulse-av">{answered ? '✓' : who}</span>
+    <span className="callpulse-t">{answered ? 'connected 00:07' : 'incoming…'}</span></button>;
+};
+export default CallPulse;

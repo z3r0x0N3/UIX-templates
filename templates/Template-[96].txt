@@ -1,0 +1,8 @@
+'use client';
+import './CubeFlip.css';
+const CubeFlip = ({ color = '#8A00FF' }) => (
+  <div className="cube-scene"><div className="cube" style={{ '--cb': color }}>
+    {Array.from({ length: 6 }, (_, i) => <div key={i} className={`cube-f f${i}`} />)}
+  </div></div>
+);
+export default CubeFlip;

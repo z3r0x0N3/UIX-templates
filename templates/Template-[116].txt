@@ -1,0 +1,11 @@
+'use client';
+import './KbdKeys.css';
+const KbdKeys = ({ keys = ['esc', 'tab', '⌃', '⌥', '⌘', '⏎'] }) => (
+  <div className="kbd">{keys.map(k => (
+    <button key={k} className="kbd-k" onClick={e => {
+      e.currentTarget.classList.remove('hit');
+      void e.currentTarget.offsetWidth;
+      e.currentTarget.classList.add('hit');
+    }}>{k}</button>))}</div>
+);
+export default KbdKeys;

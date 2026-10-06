@@ -1,0 +1,6 @@
+'use client';
+import './SaturnTilt.css';
+const SaturnTilt = () => (
+  <div className="saturn"><div className="saturn-ball" /><div className="saturn-ring" /></div>
+);
+export default SaturnTilt;

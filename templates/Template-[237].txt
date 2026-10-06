@@ -1,0 +1,4 @@
+'use client';
+import './FrisbeeSpin.css';
+const FrisbeeSpin = () => <div className="frisbeefield"><div className="frisbee">◎</div></div>;
+export default FrisbeeSpin;

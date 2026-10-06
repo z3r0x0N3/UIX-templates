@@ -1,0 +1,10 @@
+'use client';
+import { useState } from 'react';
+import './CheckboxPop.css';
+const CheckboxPop = ({ color = '#00F0FF' }) => {
+  const [v, setV] = useState(false);
+  return <button onClick={() => setV(!v)} className={`ckpop${v ? ' on' : ''}`}
+    style={{ '--ck': color }} aria-pressed={v}>
+    <svg viewBox="0 0 24 24"><path className="ckpop-mark" d="M4 12.5l5 5L20 6.5" /></svg></button>;
+};
+export default CheckboxPop;

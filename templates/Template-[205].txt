@@ -1,0 +1,16 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './TimerRing.css';
+const TimerRing = ({ secs = 60 }) => {
+  const [left, setLeft] = useState(secs);
+  useEffect(() => { const t0 = Date.now();
+    const iv = setInterval(() => setLeft(secs - ((Date.now() - t0) / 1000) % (secs + 1)), 200);
+    return () => clearInterval(iv); }, [secs]);
+  const C = 2 * Math.PI * 52;
+  return <div className="timerring"><svg width="124" height="124">
+    <circle cx="62" cy="62" r="52" className="timerring-track" />
+    <circle cx="62" cy="62" r="52" className="timerring-arc"
+      strokeDasharray={C} strokeDashoffset={C * (1 - left / secs)}
+      transform="rotate(-90 62 62)" /></svg><b>{Math.ceil(left)}s</b></div>;
+};
+export default TimerRing;

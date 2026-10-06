@@ -1,0 +1,9 @@
+'use client';
+import './AtomCore.css';
+const AtomCore = () => (
+  <div className="atom"><span className="atom-n" />
+    <span className="atom-o o1"><i /></span>
+    <span className="atom-o o2"><i /></span>
+    <span className="atom-o o3"><i /></span></div>
+);
+export default AtomCore;

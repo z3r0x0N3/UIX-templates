@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './BellShake.css';
+const BellShake = () => {
+  const [n, setN] = useState(0);
+  const [ring, setRing] = useState(false);
+  useEffect(() => { const iv = setInterval(() => {
+      setN(v => v + 1); setRing(true); setTimeout(() => setRing(false), 900);
+    }, 3200); return () => clearInterval(iv); }, []);
+  return <div className={`bellring${ring ? ' ring' : ''}`}>🔔<span className="bellring-n">{n}</span></div>;
+};
+export default BellShake;

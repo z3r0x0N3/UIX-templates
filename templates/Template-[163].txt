@@ -1,0 +1,7 @@
+'use client';
+import './PendulumSwing.css';
+const PendulumSwing = ({ period = 2 }) => (
+  <div className="pendulum"><div className="pendulum-rod" style={{ animationDuration: `${period}s` }}>
+    <span className="pendulum-bob" /></div><div className="pendulum-mount" /></div>
+);
+export default PendulumSwing;

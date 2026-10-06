@@ -1,0 +1,15 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './StopwatchRun.css';
+const StopwatchRun = () => {
+  const [t, setT] = useState(0);
+  const [laps, setLaps] = useState([]);
+  useEffect(() => { const t0 = Date.now();
+    const iv = setInterval(() => setT(Date.now() - t0), 47);
+    return () => clearInterval(iv); }, []);
+  const fmt = ms => `${String(Math.floor(ms / 60000)).padStart(2, '0')}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}.${String(Math.floor(ms / 10) % 100).padStart(2, '0')}`;
+  return <div className="stopwatch"><div className="stopwatch-t">{fmt(t)}</div>
+    <button className="u-btn" onClick={() => setLaps(l => [...l.slice(-2), t])}>lap</button>
+    <div className="stopwatch-laps">{laps.map((l, i) => <span key={i}>{fmt(l)}</span>)}</div></div>;
+};
+export default StopwatchRun;

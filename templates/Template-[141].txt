@@ -1,0 +1,19 @@
+'use client';
+import { useState } from 'react';
+import './RouletteWheel.css';
+const RouletteWheel = ({ pockets = 12 }) => {
+  const [rot, setRot] = useState(0);
+  const [num, setNum] = useState(0);
+  const spin = () => {
+    const target = rot + 720 + Math.random() * 720;
+    setRot(target);
+    setNum(Math.floor(Math.random() * pockets));
+  };
+  return <div className="roulette"><div className="roulette-wheel" style={{ transform: `rotate(${rot}deg)` }}>
+    {Array.from({ length: pockets }, (_, i) => (
+      <span key={i} className={`roulette-p${i === num ? ' hit' : ''}`}
+        style={{ transform: `rotate(${i * (360 / pockets)}deg) translateY(-58px)` }}>{i}</span>))}</div>
+    <div className="roulette-pointer">▼</div>
+    <div className="u-row"><button className="u-btn" onClick={spin}>spin</button><b>{num}</b></div></div>;
+};
+export default RouletteWheel;

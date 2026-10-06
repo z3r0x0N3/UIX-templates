@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './RuneCast.css';
+const RUNES = ['ᚠ', 'ᚢ', 'ᚦ', 'ᚨ', 'ᚱ'];
+const RuneCast = () => {
+  const [k, setK] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setK(v => v + 1), 3800);
+    return () => clearInterval(iv); }, []);
+  return <div className="runecast" key={k}>{RUNES.map((r, i) => (
+    <span key={i} className="runecast-r" style={{ animationDelay: `${i * 0.16}s`, left: `${8 + i * 19}%` }}>{r}</span>))}</div>;
+};
+export default RuneCast;

@@ -1,0 +1,8 @@
+'use client';
+import './WifiChase.css';
+const WifiChase = ({ color = '#08A66C' }) => (
+  <div className="wifichase" style={{ '--wc': color }}>
+    <span className="wc-dot" /><i className="wc-a a1" /><i className="wc-a a2" /><i className="wc-a a3" />
+  </div>
+);
+export default WifiChase;

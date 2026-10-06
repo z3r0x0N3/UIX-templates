@@ -1,0 +1,20 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './TypeDelete.css';
+const TypeDelete = ({ lines = ['drafting…', 'revising…', 'shipping it.'], type = 70, erase = 34 }) => {
+  const [txt, setTxt] = useState('');
+  const [li, setLi] = useState(0);
+  const [del, setDel] = useState(false);
+  useEffect(() => {
+    const line = lines[li % lines.length];
+    const t = setTimeout(() => {
+      if (!del && txt.length < line.length) setTxt(line.slice(0, txt.length + 1));
+      else if (!del) setTimeout(() => setDel(true), 900);
+      else if (txt.length > 0) setTxt(txt.slice(0, -1));
+      else { setDel(false); setLi(li + 1); }
+    }, del ? erase : type);
+    return () => clearTimeout(t);
+  }, [txt, del, li]);
+  return <div className="tdel"><span>{txt}</span><span className="tw-caret">▌</span></div>;
+};
+export default TypeDelete;

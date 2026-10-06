@@ -1,0 +1,6 @@
+'use client';
+import './SpinnerRing.css';
+const SpinnerRing = ({ color = '#00F0FF', size = 44 }) => (
+  <div className="spinring" style={{ '--sr': color, width: size, height: size }} />
+);
+export default SpinnerRing;

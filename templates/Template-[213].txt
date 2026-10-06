@@ -1,0 +1,11 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './TrafficLight.css';
+const TrafficLight = () => {
+  const [s, setS] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setS(v => (v + 1) % 3), 1600);
+    return () => clearInterval(iv); }, []);
+  return <div className="tlight">{['r', 'a', 'g'].map((c, i) => (
+    <i key={c} className={`tlight-l ${c}${s === i ? ' on' : ''}`} />))}</div>;
+};
+export default TrafficLight;

@@ -1,0 +1,7 @@
+'use client';
+import './TicketStub.css';
+const TicketStub = ({ event = 'NEON FEST', seat = 'A-42' }) => (
+  <div className="ticket"><div className="ticket-main"><b>{event}</b><span>ADMIT ONE</span></div>
+    <div className="ticket-perf" /><div className="ticket-stub">{seat}</div></div>
+);
+export default TicketStub;

@@ -1,0 +1,9 @@
+'use client';
+import './OutlineDraw.css';
+const OutlineDraw = ({ text = 'VECTOR', color = '#00F0FF', dur = 2.6 }) => (
+  <svg className="odraw" viewBox="0 0 320 90">
+    <text x="160" y="62" textAnchor="middle" className="odraw-text"
+      style={{ '--oc': color, animationDuration: `${dur}s` }}>{text}</text>
+  </svg>
+);
+export default OutlineDraw;

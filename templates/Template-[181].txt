@@ -1,0 +1,9 @@
+'use client';
+import { useState } from 'react';
+import './LockShackle.css';
+const LockShackle = () => {
+  const [open, setOpen] = useState(false);
+  return <button onClick={() => setOpen(!open)} className={`padlock${open ? ' open' : ''}`}
+    aria-label="lock"><span className="padlock-shackle" /><span className="padlock-body">{open ? '○' : '●'}</span></button>;
+};
+export default LockShackle;

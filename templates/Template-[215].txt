@@ -1,0 +1,7 @@
+'use client';
+import './RunwayLights.css';
+const RunwayLights = ({ n = 9 }) => (
+  <div className="runway">{Array.from({ length: n }, (_, i) => (
+    <i key={i} style={{ animationDelay: `${i * 0.12}s` }} />))}</div>
+);
+export default RunwayLights;

@@ -1,0 +1,7 @@
+'use client';
+import './MailboxFlag.css';
+const MailboxFlag = () => (
+  <div className="mailbox"><div className="mailbox-box">▭</div>
+    <div className="mailbox-letter">✉</div><div className="mailbox-flag" /></div>
+);
+export default MailboxFlag;

@@ -1,0 +1,32 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const AsteroidDrift = ({ rocks = 8 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const R = Array.from({ length: rocks }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      vx: -(0.2 + Math.random() * 0.7), r: 6 + Math.random() * 14,
+      rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.03,
+      n: 7 + Math.floor(Math.random() * 3) }));
+    let raf = 0;
+    const rock = (r, t) => { x.beginPath();
+      for (let i = 0; i <= r.n; i++) { const a = (i / r.n) * 6.28 + r.rot;
+        const rr = r.r * (0.75 + 0.25 * Math.sin(a * 3 + t));
+        const px = r.x + Math.cos(a) * rr, py = r.y + Math.sin(a) * rr;
+        i ? x.lineTo(px, py) : x.moveTo(px, py); }
+      x.closePath(); x.stroke(); };
+    const tick = () => { x.fillStyle = '#030509'; x.fillRect(0, 0, c.width, c.height);
+      const t = Date.now() / 500;
+      x.strokeStyle = 'rgba(150,170,200,0.8)'; x.lineWidth = 1.5;
+      R.forEach(r => { r.x += r.vx; r.rot += r.vr;
+        if (r.x < -30) { r.x = c.width + 30; r.y = Math.random() * c.height; }
+        rock(r, t); });
+      x.fillStyle = '#00F0FF'; x.font = '16px monospace'; x.fillText('▲', 30, 150);
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [rocks]);
+  return <canvas ref={ref} width={320} height={180} className="fx-asteroid" />;
+};
+export default AsteroidDrift;

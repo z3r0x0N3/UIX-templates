@@ -1,0 +1,6 @@
+'use client';
+import './GridFlow.css';
+const GridFlow = () => (
+  <div className="gridflow"><div className="gridflow-floor" /><div className="gridflow-sun" /></div>
+);
+export default GridFlow;

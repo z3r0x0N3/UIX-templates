@@ -1,0 +1,8 @@
+'use client';
+import './DnaHelix.css';
+const DnaHelix = ({ rungs = 10 }) => (
+  <div className="dnahelix">{Array.from({ length: rungs }, (_, i) => (
+    <div key={i} className="dnahelix-r" style={{ animationDelay: `${-i * 0.14}s` }}>
+      <i className="dl" /><i className="dr" /><span className="dbar" /></div>))}</div>
+);
+export default DnaHelix;

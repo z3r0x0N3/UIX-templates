@@ -1,0 +1,14 @@
+'use client';
+import { useState } from 'react';
+import './CopyButton.css';
+const CopyButton = ({ value = 'npx aetherion' }) => {
+  const [ok, setOk] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(value); } catch {}
+    setOk(true); setTimeout(() => setOk(false), 1600);
+  };
+  return <button onClick={copy} className={`copybtn${ok ? ' ok' : ''}`}>
+    <span className="copybtn-t">{ok ? 'Copied ✓' : value}</span>
+    <span className="copybtn-i">{ok ? '✓' : '⧉'}</span></button>;
+};
+export default CopyButton;

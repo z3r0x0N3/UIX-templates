@@ -1,0 +1,6 @@
+'use client';
+import './PolaroidDev.css';
+const PolaroidDev = ({ caption = '08:34 · HW lab' }) => (
+  <div className="poladev"><div className="poladev-photo" /><div className="poladev-cap">{caption}</div></div>
+);
+export default PolaroidDev;

@@ -1,0 +1,14 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './WhackMole.css';
+const WhackMole = () => {
+  const [up, setUp] = useState(-1);
+  const [score, setScore] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setUp(Math.floor(Math.random() * 9)), 800);
+    return () => clearInterval(iv); }, []);
+  return <div className="whack"><div className="whack-score">score {score}</div>
+    <div className="whack-grid">{Array.from({ length: 9 }, (_, i) => (
+      <button key={i} className="whack-hole" onClick={() => i === up && (setScore(s => s + 1), setUp(-1))}>
+        <span className={`whack-mole${i === up ? ' up' : ''}`}>◉</span></button>))}</div></div>;
+};
+export default WhackMole;

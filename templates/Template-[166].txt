@@ -1,0 +1,6 @@
+'use client';
+import './SpringBob.css';
+const SpringBob = () => (
+  <div className="springbob"><div className="springbob-coil" /><div className="springbob-head">🤖</div></div>
+);
+export default SpringBob;

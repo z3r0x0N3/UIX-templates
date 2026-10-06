@@ -1,0 +1,8 @@
+'use client';
+import './StaggerRise.css';
+const StaggerRise = ({ text = 'ASCEND', step = 0.06 }) => (
+  <div className="srise">{[...text].map((ch, i) => (
+    <span key={i} className="u-mask"><span className="u-letter srise-l"
+      style={{ animationDelay: `${i * step}s` }}>{ch === ' ' ? '\u00A0' : ch}</span></span>))}</div>
+);
+export default StaggerRise;

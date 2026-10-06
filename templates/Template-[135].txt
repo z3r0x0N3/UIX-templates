@@ -1,0 +1,11 @@
+'use client';
+import { useState } from 'react';
+import './CandleFlame.css';
+const CandleFlame = () => {
+  const [out, setOut] = useState(false);
+  return <div className="candle" onClick={() => setOut(true)}>
+    <div className={`candle-flame${out ? ' out' : ''}`} onAnimationEnd={() => out && setTimeout(() => setOut(false), 900)} />
+    <div className="candle-wick" /><div className="candle-wax" />
+    <div className="u-dim">click to blow out</div></div>;
+};
+export default CandleFlame;

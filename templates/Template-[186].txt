@@ -1,0 +1,18 @@
+'use client';
+import { useState } from 'react';
+import './KeypadPress.css';
+const KeypadPress = () => {
+  const [pin, setPin] = useState('');
+  const [ok, setOk] = useState(false);
+  const press = d => {
+    if (ok) { setPin(''); setOk(false); return; }
+    const n = (pin + d).slice(0, 4);
+    setPin(n);
+    if (n.length === 4) setTimeout(() => setOk(true), 250);
+  };
+  return <div className="keypad"><div className={`keypad-dots${ok ? ' ok' : ''}`}>
+    {[0, 1, 2, 3].map(i => <i key={i} className={pin.length > i ? 'on' : ''} />)}</div>
+    <div className="keypad-grid">{[1,2,3,4,5,6,7,8,9,'⌫',0,'✓'].map(k => (
+      <button key={k} onClick={() => k === '⌫' ? setPin(p => p.slice(0, -1)) : k === '✓' ? null : press(k)}>{k}</button>))}</div></div>;
+};
+export default KeypadPress;

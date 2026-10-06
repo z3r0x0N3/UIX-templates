@@ -1,0 +1,7 @@
+'use client';
+import './MoonGlow.css';
+const MoonGlow = () => (
+  <div className="moonglow"><div className="moonglow-halo" /><div className="moonglow-disc">☾</div>
+    <div className="moonglow-cloud" /></div>
+);
+export default MoonGlow;

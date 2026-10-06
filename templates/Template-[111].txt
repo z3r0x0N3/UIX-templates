@@ -1,0 +1,7 @@
+'use client';
+import './CouponCut.css';
+const CouponCut = ({ off = '−20%' }) => (
+  <div className="coupon"><span className="coupon-cut" /><span className="coupon-sc">✂</span>
+    <b>{off}</b><span>all systems</span></div>
+);
+export default CouponCut;

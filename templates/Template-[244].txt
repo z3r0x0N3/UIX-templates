@@ -1,0 +1,7 @@
+'use client';
+import './SlinkySteps.css';
+const SlinkySteps = ({ steps = 5 }) => (
+  <div className="slinky"><div className="slinky-coil" />
+    {Array.from({ length: steps }, (_, i) => <span key={i} className="slinky-step" style={{ '--i': i }} />)}</div>
+);
+export default SlinkySteps;

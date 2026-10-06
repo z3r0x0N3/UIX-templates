@@ -1,0 +1,8 @@
+'use client';
+import './WaveText.css';
+const WaveText = ({ text = 'UNDULATE', amp = 9, step = 0.12 }) => (
+  <div className="wtext">{[...text].map((ch, i) => (
+    <span key={i} className="u-letter wtext-l"
+      style={{ animationDelay: `${i * step}s` }}>{ch}</span>))}</div>
+);
+export default WaveText;

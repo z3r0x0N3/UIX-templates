@@ -1,0 +1,9 @@
+'use client';
+import './RubiksTwist.css';
+const RubiksTwist = () => (
+  <div className="rubiks"><div className="rubiks-face">
+    {['r','y','b','g','o','w','r','y','b'].map((c, i) => (
+      <i key={i} className={`rubiks-s ${c}`} style={{ animationDelay: `${(i % 3) * 0.3}s` }} />))}
+  </div></div>
+);
+export default RubiksTwist;

@@ -1,0 +1,15 @@
+'use client';
+import { useState } from 'react';
+import './TargetHit.css';
+const TargetHit = () => {
+  const [pos, setPos] = useState({ x: 40, y: 40 });
+  const [score, setScore] = useState(0);
+  const [pop, setPop] = useState(0);
+  const move = () => setPos({ x: 8 + Math.random() * 76, y: 8 + Math.random() * 68 });
+  const hit = e => { e.stopPropagation(); setScore(s => s + 1); setPop(p => p + 1); move(); };
+  return <div className="targetrange" onClick={move}>
+    <div className="targetscore">score {score}</div>
+    <button className="bullseye" style={{ left: `${pos.x}%`, top: `${pos.y}%` }} onClick={hit} key={pop}>
+      <i /><i /><i /></button></div>;
+};
+export default TargetHit;

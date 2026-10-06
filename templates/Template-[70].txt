@@ -1,0 +1,8 @@
+'use client';
+import './FlipLetters.css';
+const FlipLetters = ({ text = 'FLIPBOOK', step = 0.11 }) => (
+  <div className="ftext">{[...text].map((ch, i) => (
+    <span key={i} className="u-letter ftext-l"
+      style={{ animationDelay: `${i * step}s` }}>{ch}</span>))}</div>
+);
+export default FlipLetters;

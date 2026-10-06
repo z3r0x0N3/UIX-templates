@@ -1,0 +1,23 @@
+'use client';
+import { useEffect, useRef } from 'react';
+import './SpectrumBars.css';
+const SpectrumBars = ({ bands = 28 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const host = ref.current;
+    const bars = Array.from({ length: bands }, () => {
+      const d = document.createElement('i'); host.appendChild(d); return { el: d, v: 0.3, t: 0.3 }; });
+    let raf = 0, n = 0;
+    const tick = () => { n++;
+      bars.forEach((b, i) => {
+        if (n % 10 === 0) b.t = 0.08 + Math.random() * (0.9 - Math.abs(i - bands / 2) / bands);
+        b.v += (b.t - b.v) * 0.3;
+        b.el.style.transform = `scaleY(${b.v})`;
+        b.el.style.background = b.v > 0.75 ? '#FF003C' : b.v > 0.5 ? '#FFD400' : '#08A66C'; });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); host.innerHTML = ''; };
+  }, [bands]);
+  return <div ref={ref} className="spectrum" />;
+};
+export default SpectrumBars;

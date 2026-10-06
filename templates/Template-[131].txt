@@ -1,0 +1,6 @@
+'use client';
+import './SunRays.css';
+const SunRays = () => (
+  <div className="sunrays"><div className="sunrays-rays" /><div className="sunrays-core">☀</div></div>
+);
+export default SunRays;

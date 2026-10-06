@@ -1,0 +1,21 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './ChatBubbles.css';
+const SCRIPT = [['L', 'status?'], ['R', 'all green ●'], ['L', 'ship it 🚀']];
+const ChatBubbles = () => {
+  const [n, setN] = useState(0);
+  const [typing, setTyping] = useState(true);
+  useEffect(() => {
+    setTyping(true);
+    const t1 = setTimeout(() => { setTyping(false); setN(v => v + 1); }, 1100);
+    const t2 = setTimeout(() => {}, 2200);
+    const iv = setInterval(() => {}, 99999);
+    const loop = setTimeout(() => {}, 10);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearInterval(iv); clearTimeout(loop); };
+  }, [Math.floor(n / (SCRIPT.length + 1))]);
+  const shown = SCRIPT.slice(0, n % (SCRIPT.length + 1));
+  return <div className="chatloop">{shown.map(([side, t], i) => (
+    <div key={i} className={`chat-m ${side}`}>{t}</div>))}
+    {typing && shown.length < SCRIPT.length && <div className="chat-m typing"><i /><i /><i /></div>}</div>;
+};
+export default ChatBubbles;

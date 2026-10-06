@@ -1,0 +1,14 @@
+'use client';
+import { useState } from 'react';
+import './SafeDial.css';
+const SafeDial = () => {
+  const [rot, setRot] = useState(0);
+  const [open, setOpen] = useState(false);
+  const spin = () => { setRot(r => r + 360 + Math.floor(Math.random() * 720)); setOpen(false);
+    setTimeout(() => setOpen(Math.random() > 0.5), 1600); };
+  return <div className="safe"><div className="safe-door" style={{ transform: `rotate(${rot}deg)` }}>
+    {Array.from({ length: 12 }, (_, i) => <i key={i} style={{ transform: `rotate(${i * 30}deg)` }} />)}</div>
+    <button className="u-btn" onClick={spin}>spin</button>
+    <div className={`safe-state${open ? ' open' : ''}`}>{open ? 'CLICK · open' : 'locked'}</div></div>;
+};
+export default SafeDial;

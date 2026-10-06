@@ -1,0 +1,28 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const LanternRise = ({ n = 9 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const spawn = () => ({ x: 20 + Math.random() * 280, y: 200,
+      v: 0.25 + Math.random() * 0.5, w: Math.random() * 6.28, s: 0.7 + Math.random() * 0.8, fl: Math.random() * 6.28 });
+    const L = Array.from({ length: n }, spawn);
+    let raf = 0;
+    const tick = () => { x.fillStyle = '#060a18'; x.fillRect(0, 0, c.width, c.height);
+      L.forEach((l, i) => { l.y -= l.v; l.w += 0.008; l.fl += 0.05;
+        if (l.y < -24) L[i] = spawn();
+        const flick = 0.75 + 0.25 * Math.sin(l.fl);
+        x.save(); x.translate(l.x + Math.sin(l.w) * 14, l.y); x.scale(l.s, l.s);
+        x.fillStyle = `rgba(255,170,60,${0.9 * flick})`;
+        x.beginPath(); x.ellipse(0, 0, 9, 12, 0, 0, 6.29); x.fill();
+        x.fillStyle = `rgba(255,230,150,${flick})`;
+        x.beginPath(); x.ellipse(0, -1, 4.5, 7, 0, 0, 6.29); x.fill();
+        x.fillStyle = 'rgba(60,30,10,0.9)'; x.fillRect(-6, 11, 12, 3);
+        x.restore(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [n]);
+  return <canvas ref={ref} width={320} height={180} className="fx-lantern" />;
+};
+export default LanternRise;

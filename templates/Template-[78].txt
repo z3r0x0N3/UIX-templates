@@ -1,0 +1,6 @@
+'use client';
+import './GlowButton.css';
+const GlowButton = ({ children = 'Energize', color = '#00F0FF' }) => (
+  <button className="glowbtn" style={{ '--gb': color }}>{children}</button>
+);
+export default GlowButton;

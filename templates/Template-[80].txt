@@ -1,0 +1,18 @@
+'use client';
+import { useRef, useState } from 'react';
+import './DeleteButton.css';
+const DeleteButton = ({ label = 'Delete vault', hold = 1200 }) => {
+  const [p, setP] = useState(0);
+  const raf = useRef(0);
+  const t0 = useRef(0);
+  const start = () => { t0.current = performance.now();
+    const step = n => { const k = (n - t0.current) / hold;
+      if (k >= 1) { setP(1); return; } setP(k); raf.current = requestAnimationFrame(step); };
+    raf.current = requestAnimationFrame(step); };
+  const stop = () => { cancelAnimationFrame(raf.current); setP(s => (s >= 1 ? 1 : 0)); };
+  return <button className={`holddel${p >= 1 ? ' done' : ''}`} onPointerDown={start}
+    onPointerUp={stop} onPointerLeave={stop}>
+    <span className="holddel-fill" style={{ transform: `scaleX(${p})` }} />
+    <span className="holddel-t">{p >= 1 ? 'Deleted ✓' : label}</span></button>;
+};
+export default DeleteButton;

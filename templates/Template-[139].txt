@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './CoinFlip.css';
+const CoinFlip = () => {
+  const [side, setSide] = useState('H');
+  const [spins, setSpins] = useState(0);
+  const flip = () => { setSide(Math.random() > 0.5 ? 'H' : 'T'); setSpins(s => s + 3); };
+  return <button onClick={flip} className="coinflip" aria-label="flip coin">
+    <span className="coinflip-in" style={{ transform: `rotateY(${spins * 360 + (side === 'H' ? 0 : 180)}deg)` }}>
+      <span className="coinflip-f">H</span><span className="coinflip-b">T</span></span></button>;
+};
+export default CoinFlip;

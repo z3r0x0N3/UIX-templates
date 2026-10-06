@@ -1,0 +1,24 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const WindowRain = ({ drops = 26 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const D = Array.from({ length: drops }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      v: 1.5 + Math.random() * 3, trail: [] }));
+    let raf = 0;
+    const tick = () => { x.fillStyle = 'rgba(10,16,26,0.35)'; x.fillRect(0, 0, c.width, c.height);
+      D.forEach(d => { d.trail.push(d.y); if (d.trail.length > 14) d.trail.shift();
+        d.y += d.v; if (d.y > c.height) { d.y = -10; d.trail = []; }
+        x.strokeStyle = 'rgba(140,190,240,0.5)'; x.lineWidth = 1.5;
+        x.beginPath(); x.moveTo(d.x, d.trail[0] ?? d.y); x.lineTo(d.x, d.y); x.stroke();
+        x.fillStyle = 'rgba(200,230,255,0.9)';
+        x.beginPath(); x.arc(d.x, d.y, 1.6, 0, 6.29); x.fill(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [drops]);
+  return <canvas ref={ref} width={320} height={180} className="fx-rain" />;
+};
+export default WindowRain;

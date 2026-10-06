@@ -1,0 +1,10 @@
+'use client';
+import './RouteDraw.css';
+const RouteDraw = () => (
+  <svg className="routedraw" viewBox="0 0 300 150">
+    <path className="routedraw-path" d="M30 120 C 90 20, 150 140, 210 60 S 270 40, 272 36" />
+    <circle cx="30" cy="120" r="6" className="routedraw-dot" />
+    <circle cx="272" cy="36" r="6" className="routedraw-dot end" />
+  </svg>
+);
+export default RouteDraw;

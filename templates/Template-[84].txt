@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './StarRating.css';
+const StarRating = ({ max = 5 }) => {
+  const [v, setV] = useState(3);
+  const [h, setH] = useState(0);
+  return <div className="srate" onMouseLeave={() => setH(0)}>
+    {Array.from({ length: max }, (_, i) => (
+      <button key={i} onMouseEnter={() => setH(i + 1)} onClick={() => setV(i + 1)}
+        className={`srate-s${(h || v) > i ? ' on' : ''}`}>★</button>))}</div>;
+};
+export default StarRating;

@@ -1,0 +1,7 @@
+'use client';
+import './ButterflyDrift.css';
+const ButterflyDrift = () => (
+  <div className="bfly-field">{['🦋', '🦋', '🦋'].map((b, i) => (
+    <span key={i} className={`bfly b${i}`}>{b}</span>))}</div>
+);
+export default ButterflyDrift;

@@ -1,0 +1,11 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './PageDots.css';
+const PageDots = ({ pages = 5 }) => {
+  const [i, setI] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setI(v => (v + 1) % pages), 1500);
+    return () => clearInterval(iv); }, [pages]);
+  return <div className="pagedots">{Array.from({ length: pages }, (_, j) => (
+    <button key={j} onClick={() => setI(j)} className={`pagedots-d${j === i ? ' on' : ''}`} />))}</div>;
+};
+export default PageDots;

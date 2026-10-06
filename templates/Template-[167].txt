@@ -1,0 +1,7 @@
+'use client';
+import './SeesawTilt.css';
+const SeesawTilt = () => (
+  <div className="seesaw"><div className="seesaw-plank"><span className="seesaw-kid l">🧒</span><span className="seesaw-kid r">🧒</span></div>
+    <div className="seesaw-base">▲</div></div>
+);
+export default SeesawTilt;

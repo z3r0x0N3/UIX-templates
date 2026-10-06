@@ -1,0 +1,28 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const GalaxySpiral = ({ stars = 500 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const S = Array.from({ length: stars }, () => {
+      const arm = Math.random() > 0.5 ? 0 : Math.PI;
+      const r = 6 + Math.pow(Math.random(), 0.7) * 78;
+      return { arm, r, a: arm + r * 0.09 + (Math.random() - 0.5) * 0.35, s: Math.random() };
+    });
+    let raf = 0, rot = 0;
+    const tick = () => { rot += 0.0016;
+      x.fillStyle = '#02030a'; x.fillRect(0, 0, c.width, c.height);
+      const cx = c.width / 2, cy = c.height / 2;
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, 12);
+      g.addColorStop(0, 'rgba(255,240,200,0.9)'); g.addColorStop(1, 'rgba(255,240,200,0)');
+      x.fillStyle = g; x.beginPath(); x.arc(cx, cy, 12, 0, 6.29); x.fill();
+      S.forEach(s => { const a = s.a + rot * (90 / s.r);
+        x.fillStyle = `rgba(${170 + s.s * 80},${200},255,${0.35 + s.s * 0.6})`;
+        x.fillRect(cx + Math.cos(a) * s.r, cy + Math.sin(a) * s.r * 0.62, 1.4, 1.4); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [stars]);
+  return <canvas ref={ref} width={320} height={180} className="fx-galaxy" />;
+};
+export default GalaxySpiral;

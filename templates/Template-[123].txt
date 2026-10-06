@@ -1,0 +1,26 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const FirefliesNight = ({ flies = 30 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const F = Array.from({ length: flies }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      a: Math.random() * 6.28, sp: 0.2 + Math.random() * 0.5, ph: Math.random() * 6.28 }));
+    let raf = 0;
+    const tick = () => { x.fillStyle = 'rgba(3,8,4,0.4)'; x.fillRect(0, 0, c.width, c.height);
+      const t = Date.now() / 700;
+      F.forEach(f => { f.a += (Math.random() - 0.5) * 0.2;
+        f.x += Math.cos(f.a) * f.sp; f.y += Math.sin(f.a) * f.sp;
+        f.x = (f.x + c.width) % c.width; f.y = (f.y + c.height) % c.height;
+        const b = Math.max(0, Math.sin(t + f.ph));
+        const g = x.createRadialGradient(f.x, f.y, 0, f.x, f.y, 7);
+        g.addColorStop(0, `rgba(220,255,120,${b})`); g.addColorStop(1, 'rgba(220,255,120,0)');
+        x.fillStyle = g; x.beginPath(); x.arc(f.x, f.y, 7, 0, 6.29); x.fill(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [flies]);
+  return <canvas ref={ref} width={320} height={180} className="fx-firefly" />;
+};
+export default FirefliesNight;

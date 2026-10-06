@@ -1,0 +1,32 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const FireworkShow = () => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    let rockets = [], sparks = [], raf = 0;
+    const COLORS = ['#FF003C', '#FFD400', '#00F0FF', '#8A00FF', '#08A66C'];
+    const launch = (rx) => rockets.push({ x: rx ?? 40 + Math.random() * 240, y: 190,
+      vy: -(3 + Math.random() * 2), c: COLORS[Math.floor(Math.random() * COLORS.length)] });
+    const boom = (r) => { for (let i = 0; i < 46; i++) { const a = (i / 46) * 6.28;
+        sparks.push({ x: r.x, y: r.y, vx: Math.cos(a) * (1 + Math.random() * 2.4),
+          vy: Math.sin(a) * (1 + Math.random() * 2.4), life: 1, c: r.c }); } };
+    const tick = () => { x.fillStyle = 'rgba(3,5,12,0.28)'; x.fillRect(0, 0, c.width, c.height);
+      if (Math.random() < 0.03 && rockets.length < 3) launch();
+      rockets = rockets.filter(r => { r.y += r.vy;
+        x.fillStyle = r.c; x.fillRect(r.x, r.y, 2, 6);
+        if (r.vy < -0.4) r.vy += 0.05; else { boom(r); return false; } return true; });
+      sparks = sparks.filter(s => s.life > 0);
+      sparks.forEach(s => { s.x += s.vx; s.y += s.vy; s.vy += 0.03; s.life -= 0.012;
+        x.fillStyle = s.c; x.globalAlpha = Math.max(0, s.life);
+        x.fillRect(s.x, s.y, 2, 2); x.globalAlpha = 1; });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    const onClick = e => { const r = c.getBoundingClientRect();
+      launch((e.clientX - r.left) * (c.width / r.width)); };
+    c.addEventListener('click', onClick);
+    return () => { cancelAnimationFrame(raf); c.removeEventListener('click', onClick); };
+  }, []);
+  return <canvas ref={ref} width={320} height={180} className="fx-fireworks" />;
+};
+export default FireworkShow;

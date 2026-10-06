@@ -1,0 +1,31 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const PongSolo = () => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const W = c.width, H = c.height;
+    let bx = W / 2, by = H / 2, vx = 2.2, vy = 1.4, pl = H / 2, pr = H / 2, sl = 0, sr = 0;
+    let raf = 0;
+    const tick = () => { x.fillStyle = '#04060c'; x.fillRect(0, 0, W, H);
+      x.strokeStyle = 'rgba(255,255,255,.25)'; x.setLineDash([6, 6]);
+      x.beginPath(); x.moveTo(W / 2, 0); x.lineTo(W / 2, H); x.stroke(); x.setLineDash([]);
+      bx += vx; by += vy;
+      if (by < 4 || by > H - 4) vy *= -1;
+      pl += ((by - pl) * 0.09); pr += ((by - pr) * 0.09);
+      if (bx < 12 && Math.abs(by - pl) < 22) vx = Math.abs(vx) * 1.02;
+      if (bx > W - 12 && Math.abs(by - pr) < 22) vx = -Math.abs(vx) * 1.02;
+      if (bx < 0) { sr++; bx = W / 2; by = H / 2; }
+      if (bx > W) { sl++; bx = W / 2; by = H / 2; }
+      x.fillStyle = '#00F0FF';
+      x.fillRect(6, pl - 22, 5, 44); x.fillRect(W - 11, pr - 22, 5, 44);
+      x.fillStyle = '#fff'; x.beginPath(); x.arc(bx, by, 4, 0, 6.29); x.fill();
+      x.fillStyle = 'rgba(255,255,255,.6)'; x.font = '14px monospace';
+      x.fillText(sl, W / 2 - 30, 22); x.fillText(sr, W / 2 + 22, 22);
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return <canvas ref={ref} width={320} height={180} className="fx-pong" />;
+};
+export default PongSolo;

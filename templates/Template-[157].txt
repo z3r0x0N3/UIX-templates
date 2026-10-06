@@ -1,0 +1,6 @@
+'use client';
+import './PlanetSpin.css';
+const PlanetSpin = ({ dur = 14 }) => (
+  <div className="planet" style={{ animationDuration: `${dur}s` }} />
+);
+export default PlanetSpin;

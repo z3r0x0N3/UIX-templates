@@ -1,0 +1,15 @@
+'use client';
+import { useState } from 'react';
+import './TarotFlip.css';
+const DECK = [['☾', 'The Moon'], ['★', 'The Star'], ['☀', 'The Sun'], ['⚡', 'The Tower']];
+const TarotFlip = () => {
+  const [i, setI] = useState(-1);
+  const [flip, setFlip] = useState(0);
+  const draw = () => { setI((i + 1) % DECK.length); setFlip(f => f + 1); };
+  return <button onClick={draw} className="tarot">
+    <span className="tarot-in" key={flip}>
+      {i < 0 ? <span className="tarot-back">✦</span> : (
+        <span className="tarot-face"><b>{DECK[i][0]}</b><small>{DECK[i][1]}</small></span>)}
+    </span><div className="u-dim">click to draw</div></button>;
+};
+export default TarotFlip;

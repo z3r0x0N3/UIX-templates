@@ -1,0 +1,10 @@
+'use client';
+import './CampfireGlow.css';
+const CampfireGlow = () => (
+  <div className="campfire"><div className="campfire-glow" />
+    <div className="campfire-logs">🪵</div>
+    <div className="campfire-flame f1" /><div className="campfire-flame f2" />
+    <div className="campfire-flame f3" />
+    <div className="campfire-sparks"><i /><i /><i /><i /><i /><i /></div></div>
+);
+export default CampfireGlow;

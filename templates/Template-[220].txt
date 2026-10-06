@@ -1,0 +1,6 @@
+'use client';
+import './MedalSpin.css';
+const MedalSpin = () => (
+  <div className="medalspin"><span className="medalspin-ribbon" /><span className="medalspin-disc">1</span></div>
+);
+export default MedalSpin;

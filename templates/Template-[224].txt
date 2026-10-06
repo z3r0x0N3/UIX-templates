@@ -1,0 +1,10 @@
+'use client';
+import './PotionBubbles.css';
+const PotionBubbles = () => (
+  <div className="potion"><div className="potion-liquid" />
+    {[0, 1, 2, 3, 4].map(i => (
+      <i key={i} className="potion-b" style={{
+        left: `${18 + i * 14}%`, animationDuration: `${1.6 + (i % 3) * 0.7}s`,
+        animationDelay: `${-i * 0.5}s` }} />))}</div>
+);
+export default PotionBubbles;

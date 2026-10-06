@@ -1,0 +1,7 @@
+'use client';
+import './StackFan.css';
+const StackFan = ({ cards = ['A', 'B', 'C'] }) => (
+  <div className="sfan">{cards.map((c, i) => (
+    <div key={c} className="sfan-c" style={{ '--i': i - (cards.length - 1) / 2 }}>{c}</div>))}</div>
+);
+export default StackFan;

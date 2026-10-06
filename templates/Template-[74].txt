@@ -1,0 +1,23 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './AsciiMorph.css';
+const FRAMES = [
+`  ****  
+ *    * 
+ *    * 
+  ****  `,
+`   /\   
+  /  \  
+ /    \ 
+/______\`,
+`  .--.  
+ |    | 
+ |    | 
+  '--'  `];
+const AsciiMorph = ({ fps = 3 }) => {
+  const [f, setF] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setF(v => (v + 1) % FRAMES.length), 1000 / fps);
+    return () => clearInterval(iv); }, [fps]);
+  return <pre className="amorph">{FRAMES[f]}</pre>;
+};
+export default AsciiMorph;

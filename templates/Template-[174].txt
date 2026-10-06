@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './SpeedoGauge.css';
+const SpeedoGauge = ({ max = 240 }) => {
+  const [v, setV] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setV(Math.random() * max), 1600);
+    return () => clearInterval(iv); }, [max]);
+  return <div className="speedo"><div className="speedo-dial" />
+    <div className="speedo-needle" style={{ transform: `rotate(${-120 + (v / max) * 240}deg)` }} />
+    <div className="speedo-v">{Math.round(v)}</div></div>;
+};
+export default SpeedoGauge;

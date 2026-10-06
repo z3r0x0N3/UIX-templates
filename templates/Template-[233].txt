@@ -1,0 +1,9 @@
+'use client';
+import { useState } from 'react';
+import './PaperPlane.css';
+const PaperPlane = () => {
+  const [n, setN] = useState(0);
+  return <button onClick={() => setN(x => x + 1)} className="planefield" aria-label="fly plane">
+    <span className="plane" key={n}>✈</span><span className="plane-trail" key={`t${n}`} /></button>;
+};
+export default PaperPlane;

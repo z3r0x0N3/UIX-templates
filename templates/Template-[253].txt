@@ -1,0 +1,8 @@
+'use client';
+import './GeyserSpout.css';
+const GeyserSpout = () => (
+  <div className="geyser"><div className="geyser-pool" />
+    <div className="geyser-spout"><i /><i /><i /><i /><i /><i /><i /><i /></div>
+    <div className="geyser-rumble">…</div></div>
+);
+export default GeyserSpout;

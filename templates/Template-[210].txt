@@ -1,0 +1,13 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './AccordionOpen.css';
+const AccordionOpen = ({ items = [['voice', ':9876 live'], ['mcp', '21 online'], ['rag', 'indexed']] }) => {
+  const [i, setI] = useState(0);
+  useEffect(() => { const iv = setInterval(() => setI(v => (v + 1) % items.length), 2200);
+    return () => clearInterval(iv); }, [items.length]);
+  return <div className="accordion">{items.map(([h, b], j) => (
+    <div key={h} className={`acc-s${j === i ? ' open' : ''}`}>
+      <button onClick={() => setI(j)}>{h}<em>{j === i ? '−' : '+'}</em></button>
+      <div className="acc-b">{b}</div></div>))}</div>;
+};
+export default AccordionOpen;

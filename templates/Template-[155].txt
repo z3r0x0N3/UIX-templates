@@ -1,0 +1,9 @@
+'use client';
+import './BirdFlap.css';
+const BirdFlap = () => (
+  <div className="birdsky">{[0, 1, 2, 3, 4].map(i => (
+    <span key={i} className="bird" style={{
+      top: `${18 + (i % 3) * 16}%`, animationDuration: `${9 + i * 1.7}s`,
+      animationDelay: `${-i * 2.3}s`, transform: `scale(${0.7 + (i % 3) * 0.25})` }}>﹏🐦﹏</span>))}</div>
+);
+export default BirdFlap;

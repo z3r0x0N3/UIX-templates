@@ -1,0 +1,6 @@
+'use client';
+import './KiteTug.css';
+const KiteTug = () => (
+  <div className="kitesky"><div className="kite">🪁</div><div className="kite-string" /></div>
+);
+export default KiteTug;

@@ -1,0 +1,22 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const StarfieldTwinkle = ({ stars = 110 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const S = Array.from({ length: stars }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      p: Math.random() * 6.28, v: 0.1 + Math.random() * 0.35, s: Math.random() < 0.12 ? 2 : 1 }));
+    let raf = 0;
+    const tick = () => { x.fillStyle = '#04060c'; x.fillRect(0, 0, c.width, c.height);
+      const t = Date.now() / 500;
+      S.forEach(s => { s.x -= s.v; if (s.x < 0) s.x = c.width;
+        x.fillStyle = `rgba(255,255,255,${0.25 + 0.75 * Math.abs(Math.sin(t + s.p))})`;
+        x.fillRect(s.x, s.y, s.s, s.s); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [stars]);
+  return <canvas ref={ref} width={320} height={180} className="fx-starfield" />;
+};
+export default StarfieldTwinkle;

@@ -1,0 +1,8 @@
+'use client';
+import './ParachuteDrop.css';
+const ParachuteDrop = () => (
+  <div className="dropzone"><div className="parachute"><span className="chute">◠</span>
+    <span className="chute-lines" /><span className="crate">▣</span></div>
+    <div className="drop-ground" /></div>
+);
+export default ParachuteDrop;

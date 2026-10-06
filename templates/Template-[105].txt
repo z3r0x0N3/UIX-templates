@@ -1,0 +1,7 @@
+'use client';
+import './PeekCard.css';
+const PeekCard = ({ title = 'Hover me', secret = '…peek-a-boo!' }) => (
+  <div className="peekcard"><div className="peekcard-top">{title}</div>
+    <div className="peekcard-under">{secret}</div></div>
+);
+export default PeekCard;

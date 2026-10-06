@@ -1,0 +1,7 @@
+'use client';
+import './CrystalBall.css';
+const CrystalBall = () => (
+  <div className="crystalball"><div className="crystalball-mist m1" />
+    <div className="crystalball-mist m2" /><div className="crystalball-base" /></div>
+);
+export default CrystalBall;

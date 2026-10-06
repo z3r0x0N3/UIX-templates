@@ -1,0 +1,18 @@
+'use client';
+import { useState } from 'react';
+import './DownloadBar.css';
+const DownloadBar = ({ file = 'aetherion.zip' }) => {
+  const [p, setP] = useState(-1);
+  const go = () => {
+    if (p >= 0 && p < 1) return;
+    setP(0);
+    const iv = setInterval(() => setP(v => {
+      const n = v + 0.02 + Math.random() * 0.05;
+      if (n >= 1) { clearInterval(iv); return 1; } return n;
+    }), 90);
+  };
+  return <button onClick={go} className="dlbar">
+    <span className="dlbar-fill" style={{ transform: `scaleX(${Math.max(0, p)})` }} />
+    <span className="dlbar-t">{p < 0 ? `⭳ ${file}` : p >= 1 ? '✓ Saved' : `${Math.round(p * 100)}%`}</span></button>;
+};
+export default DownloadBar;

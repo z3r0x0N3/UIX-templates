@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './BrightnessDial.css';
+const LEVELS = [25, 50, 75, 100];
+const BrightnessDial = () => {
+  const [v, setV] = useState(1);
+  return <button onClick={() => setV((v + 1) % 4)} className="sunDial" aria-label="brightness">
+    <span className="sunDial-rays" style={{ opacity: 0.25 + LEVELS[v] / 160 }} />
+    <span className="sunDial-core">☀</span><b>{LEVELS[v]}%</b>
+    <span className="sunDial-demo" style={{ filter: `brightness(${0.35 + LEVELS[v] / 160})` }}>Aa</span></button>;
+};
+export default BrightnessDial;

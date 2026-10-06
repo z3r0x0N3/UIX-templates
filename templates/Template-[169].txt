@@ -1,0 +1,6 @@
+'use client';
+import './GearMesh.css';
+const GearMesh = () => (
+  <div className="gears"><span className="gear g-big">⚙</span><span className="gear g-small">⚙</span></div>
+);
+export default GearMesh;

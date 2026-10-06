@@ -1,0 +1,12 @@
+'use client';
+import { useState } from 'react';
+import './WandSpark.css';
+const WandSpark = () => {
+  const [n, setN] = useState(0);
+  return <button onClick={() => setN(x => x + 1)} className="wandzone">
+    <span className="wand">🪄</span>
+    {Array.from({ length: 10 }, (_, i) => (
+      <i key={`${n}-${i}`} className="wand-spark"
+        style={{ '--a': `${i * 36 + n * 17}deg`, animationDelay: `${i * 0.02}s` }}>✦</i>))}</button>;
+};
+export default WandSpark;

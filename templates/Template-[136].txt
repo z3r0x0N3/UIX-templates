@@ -1,0 +1,8 @@
+'use client';
+import './MetronomeSwing.css';
+const MetronomeSwing = ({ bpm = 96 }) => (
+  <div className="metro"><div className="metro-arm" style={{ animationDuration: `${60 / bpm * 2}s` }}>
+    <span className="metro-w" /></div>
+    <div className="metro-beat" style={{ animationDuration: `${60 / bpm}s` }} /></div>
+);
+export default MetronomeSwing;

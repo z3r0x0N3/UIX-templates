@@ -1,0 +1,7 @@
+'use client';
+import './FanBlades.css';
+const FanBlades = () => (
+  <div className="deskfan"><div className="deskfan-blades"><i /><i /><i /></div>
+    <div className="deskfan-hub" /><div className="deskfan-neck" /><div className="deskfan-base" /></div>
+);
+export default FanBlades;

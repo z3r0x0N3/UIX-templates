@@ -1,0 +1,9 @@
+'use client';
+import './UfoHover.css';
+const UfoHover = () => (
+  <div className="ufozone"><div className="ufo"><div className="ufo-dome" />
+    <div className="ufo-disc"><i /><i /><i /><i /><i /><i /></div>
+    <div className="ufo-beam" /></div>
+    <div className="ufo-cow">🐄</div></div>
+);
+export default UfoHover;

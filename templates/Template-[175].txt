@@ -1,0 +1,20 @@
+'use client';
+import { useEffect, useRef } from 'react';
+import './VuMeter.css';
+const VuMeter = () => {
+  const l = useRef(null), r = useRef(null);
+  useEffect(() => { let raf = 0, a = 0, b = 0, ta = 0, tb = 0, n = 0;
+    const tick = () => { n++;
+      if (n % 24 === 0) { ta = Math.random(); tb = Math.random(); }
+      a += (ta - a) * 0.2; b += (tb - b) * 0.2;
+      if (l.current) l.current.style.transform = `rotate(${-40 + a * 80}deg)`;
+      if (r.current) r.current.style.transform = `rotate(${-40 + b * 80}deg)`;
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf); }, []);
+  return <div className="vumeter"><div className="vu-ch"><div className="vu-scale" />
+    <div className="vu-needle" ref={l} /><span>L</span></div>
+    <div className="vu-ch"><div className="vu-scale" />
+    <div className="vu-needle" ref={r} /><span>R</span></div></div>;
+};
+export default VuMeter;

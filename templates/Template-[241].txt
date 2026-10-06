@@ -1,0 +1,18 @@
+'use client';
+import { useState } from 'react';
+import './DartBoard.css';
+const DartBoard = () => {
+  const [darts, setDarts] = useState([]);
+  const toss = e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width / 2, y = e.clientY - r.top - r.height / 2;
+    if (Math.hypot(x, y) > r.width / 2) return;
+    const score = Math.max(1, 10 - Math.floor(Math.hypot(x, y) / (r.width / 20)));
+    setDarts(d => [...d.slice(-4), { x, y, score }]);
+  };
+  return <div className="dartboard" onClick={toss}>
+    <span className="dart-r r0" /><span className="dart-r r1" /><span className="dart-r r2" />
+    {darts.map((d, i) => <span key={i} className="dart-hit" style={{ left: `calc(50% + ${d.x}px)`, top: `calc(50% + ${d.y}px)` }}>✚<b>{d.score}</b></span>)}
+  </div>;
+};
+export default DartBoard;

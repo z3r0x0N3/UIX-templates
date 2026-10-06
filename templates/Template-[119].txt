@@ -1,0 +1,22 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const SnowFall = ({ flakes = 90 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const F = Array.from({ length: flakes }, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      r: 0.8 + Math.random() * 2.2, v: 0.3 + Math.random() * 0.9, ph: Math.random() * 6.28 }));
+    let raf = 0;
+    const tick = () => { x.fillStyle = '#0a0f1c'; x.fillRect(0, 0, c.width, c.height);
+      F.forEach(f => { f.y += f.v; f.ph += 0.01; f.x += Math.sin(f.ph) * 0.4;
+        if (f.y > c.height) { f.y = -4; f.x = Math.random() * c.width; }
+        x.fillStyle = 'rgba(230,242,255,0.9)';
+        x.beginPath(); x.arc(f.x, f.y, f.r, 0, 6.29); x.fill(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [flakes]);
+  return <canvas ref={ref} width={320} height={180} className="fx-snow" />;
+};
+export default SnowFall;

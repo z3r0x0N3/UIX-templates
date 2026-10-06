@@ -1,0 +1,8 @@
+'use client';
+import './GlowTrace.css';
+const GlowTrace = ({ color = '#00F0FF' }) => (
+  <div className="gtrace" style={{ '--gt': color }}><span>TRACE</span>
+    <svg className="gtrace-svg" viewBox="0 0 200 120" preserveAspectRatio="none">
+      <rect x="2" y="2" width="196" height="116" rx="10" className="gtrace-rect" /></svg></div>
+);
+export default GlowTrace;

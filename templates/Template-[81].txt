@@ -1,0 +1,10 @@
+'use client';
+import { useState } from 'react';
+import './ToggleSwitch.css';
+const ToggleSwitch = ({ on = false, color = '#08A66C' }) => {
+  const [v, setV] = useState(on);
+  return <button role="switch" aria-checked={v} onClick={() => setV(!v)}
+    className={`tswitch${v ? ' on' : ''}`} style={{ '--ts': color }}>
+    <span className="tswitch-knob" /></button>;
+};
+export default ToggleSwitch;

@@ -1,0 +1,7 @@
+'use client';
+import './MarqueeArrows.css';
+const MarqueeArrows = () => (
+  <div className="chasearrows">{[0, 1, 2, 3].map(i => (
+    <span key={i} style={{ animationDelay: `${i * 0.25}s` }}>❯</span>))}</div>
+);
+export default MarqueeArrows;

@@ -1,0 +1,10 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './BluetoothPulse.css';
+const BluetoothPulse = () => {
+  const [paired, setPaired] = useState(false);
+  useEffect(() => { const iv = setInterval(() => setPaired(p => !p), 4200);
+    return () => clearInterval(iv); }, []);
+  return <div className={`btpulse${paired ? ' paired' : ''}`}><b>ᛒ</b><span>{paired ? 'paired' : 'scanning…'}</span></div>;
+};
+export default BluetoothPulse;

@@ -1,0 +1,10 @@
+'use client';
+import './CloudDrift.css';
+const CloudDrift = () => (
+  <div className="cloudfield">{[0, 1, 2, 3].map(i => (
+    <div key={i} className="cloud" style={{
+      top: `${8 + i * 22}%`, animationDuration: `${26 + i * 9}s`,
+      animationDelay: `${-i * 7}s`, transform: `scale(${0.7 + i * 0.25})` }}>
+      <i /><i /><i /></div>))}</div>
+);
+export default CloudDrift;

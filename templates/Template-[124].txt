@@ -1,0 +1,24 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const MeteorShower = () => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    let meteors = [];
+    let raf = 0;
+    const tick = () => { x.fillStyle = 'rgba(4,6,12,0.3)'; x.fillRect(0, 0, c.width, c.height);
+      if (Math.random() < 0.03 && meteors.length < 4)
+        meteors.push({ x: 60 + Math.random() * 260, y: -10, vx: -(3 + Math.random() * 3), vy: 2 + Math.random() * 2, life: 1 });
+      meteors = meteors.filter(m => m.life > 0);
+      meteors.forEach(m => { m.x += m.vx; m.y += m.vy; m.life -= 0.012;
+        const g = x.createLinearGradient(m.x, m.y, m.x - m.vx * 12, m.y - m.vy * 12);
+        g.addColorStop(0, `rgba(255,255,255,${m.life})`); g.addColorStop(1, 'rgba(255,255,255,0)');
+        x.strokeStyle = g; x.lineWidth = 2;
+        x.beginPath(); x.moveTo(m.x, m.y); x.lineTo(m.x - m.vx * 12, m.y - m.vy * 12); x.stroke(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return <canvas ref={ref} width={320} height={180} className="fx-meteor" />;
+};
+export default MeteorShower;

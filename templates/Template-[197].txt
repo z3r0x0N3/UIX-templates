@@ -1,0 +1,10 @@
+'use client';
+import { useState } from 'react';
+import './SendArrow.css';
+const SendArrow = () => {
+  const [flying, setFlying] = useState(0);
+  const send = () => setFlying(f => f + 1);
+  return <button onClick={send} className="sendarrow" aria-label="send">
+    <span className="sendarrow-plane" key={flying}>➤</span></button>;
+};
+export default SendArrow;

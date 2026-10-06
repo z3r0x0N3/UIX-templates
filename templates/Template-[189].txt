@@ -1,0 +1,15 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './ToastSlide.css';
+const MSGS = ['Build passed ✓', 'Deploy complete 🚀', '3 issues closed'];
+const ToastSlide = () => {
+  const [i, setI] = useState(-1);
+  useEffect(() => {
+    const seq = () => { setI(v => (v + 1) % MSGS.length);
+      setTimeout(() => setI(-2), 2200); setTimeout(seq, 3400); };
+    const t = setTimeout(seq, 600);
+    return () => clearTimeout(t);
+  }, []);
+  return <div className="toastzone">{i >= 0 && <div className="toast" key={i}>{MSGS[i]}</div>}</div>;
+};
+export default ToastSlide;

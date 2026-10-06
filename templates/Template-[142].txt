@@ -1,0 +1,13 @@
+'use client';
+import { useState } from 'react';
+import './EightBall.css';
+const ANSWERS = ['yes', 'no', 'maybe', 'ask again', 'certainly', 'doubtful'];
+const EightBall = () => {
+  const [ans, setAns] = useState('8');
+  const [shaking, setShaking] = useState(false);
+  const shake = () => { if (shaking) return; setShaking(true); setAns('…');
+    setTimeout(() => { setAns(ANSWERS[Math.floor(Math.random() * ANSWERS.length)]); setShaking(false); }, 800); };
+  return <button onClick={shake} className={`eightball${shaking ? ' shaking' : ''}`}>
+    <span className="eightball-win">{ans}</span></button>;
+};
+export default EightBall;

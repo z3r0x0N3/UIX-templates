@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './HourglassSand.css';
+const HourglassSand = ({ secs = 6 }) => {
+  const [flip, setFlip] = useState(false);
+  useEffect(() => { const iv = setInterval(() => setFlip(f => !f), secs * 1000);
+    return () => clearInterval(iv); }, [secs]);
+  return <div className={`hgsand${flip ? ' flip' : ''}`} key={String(flip)}>
+    <div className="hgsand-top"><i style={{ animationDuration: `${secs}s` }} /></div>
+    <div className="hgsand-stream" /><div className="hgsand-pile" /></div>;
+};
+export default HourglassSand;

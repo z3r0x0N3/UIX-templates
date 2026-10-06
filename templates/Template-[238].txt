@@ -1,0 +1,6 @@
+'use client';
+import './BasketballBounce.css';
+const BasketballBounce = () => (
+  <div className="bbcourt"><div className="bball">🏀</div><div className="bball-shadow" /></div>
+);
+export default BasketballBounce;

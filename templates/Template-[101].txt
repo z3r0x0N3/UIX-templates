@@ -1,0 +1,6 @@
+'use client';
+import './PulseDot.css';
+const PulseDot = ({ color = '#FF003C' }) => (
+  <div className="pdot" style={{ '--pd': color }}><i className="pdot-core" /><i className="pdot-ring" /></div>
+);
+export default PulseDot;

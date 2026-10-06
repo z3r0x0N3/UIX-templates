@@ -1,0 +1,7 @@
+'use client';
+import './KeyTurn.css';
+const KeyTurn = () => (
+  <div className="keyturn"><div className="keyturn-lock">▣</div>
+    <div className="keyturn-key">⚷</div><div className="keyturn-flash">✓</div></div>
+);
+export default KeyTurn;

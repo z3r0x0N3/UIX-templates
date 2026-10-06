@@ -1,0 +1,9 @@
+'use client';
+import './MazeSolve.css';
+const MazeSolve = () => (
+  <svg className="maze" viewBox="0 0 200 120">
+    <path className="maze-walls" d="M10 10h180v100H10z M40 10v60h60V40h60v60h-30 M130 70v30h40" />
+    <circle className="maze-dot" r="5" />
+  </svg>
+);
+export default MazeSolve;

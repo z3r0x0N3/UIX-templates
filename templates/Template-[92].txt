@@ -1,0 +1,14 @@
+'use client';
+import { useRef, useState } from 'react';
+import './BackToTop.css';
+const BackToTop = () => {
+  const box = useRef(null);
+  const [show, setShow] = useState(false);
+  return <div className="btt-wrap">
+    <div ref={box} className="btt-box" onScroll={e => setShow(e.target.scrollTop > 60)}>
+      {Array.from({ length: 24 }, (_, i) => <p key={i}>log line {i + 1} — scroll down…</p>)}
+    </div>
+    <button className={`btt${show ? ' show' : ''}`}
+      onClick={() => box.current.scrollTo({ top: 0, behavior: 'smooth' })}>↑</button></div>;
+};
+export default BackToTop;

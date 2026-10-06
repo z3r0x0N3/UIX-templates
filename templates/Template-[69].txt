@@ -1,0 +1,8 @@
+'use client';
+import './BounceText.css';
+const BounceText = ({ text = 'BOUNCE', step = 0.09 }) => (
+  <div className="btext">{[...text].map((ch, i) => (
+    <span key={i} className="u-letter btext-l"
+      style={{ animationDelay: `${i * step}s` }}>{ch}</span>))}</div>
+);
+export default BounceText;

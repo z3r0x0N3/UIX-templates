@@ -1,0 +1,25 @@
+'use client';
+import { useEffect, useRef } from 'react';
+const BlackHole = ({ dust = 220 }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current, x = c.getContext('2d');
+    const P = Array.from({ length: dust }, () => ({
+      r: 26 + Math.random() * 120, a: Math.random() * 6.28, s: 0.5 + Math.random() * 1.6 }));
+    let raf = 0;
+    const tick = () => { x.fillStyle = 'rgba(0,0,0,0.35)'; x.fillRect(0, 0, c.width, c.height);
+      const cx = c.width / 2, cy = c.height / 2;
+      x.fillStyle = '#000'; x.beginPath(); x.arc(cx, cy, 22, 0, 6.29); x.fill();
+      x.strokeStyle = 'rgba(255,120,40,0.8)'; x.lineWidth = 2;
+      x.beginPath(); x.arc(cx, cy, 23, 0, 6.29); x.stroke();
+      P.forEach(p => { p.a += 9 / p.r; p.r -= 0.14;
+        if (p.r < 24) { p.r = 26 + Math.random() * 120; p.a = Math.random() * 6.28; }
+        x.fillStyle = `rgba(255,${140 + Math.floor(80 * (1 - p.r / 150))},60,0.85)`;
+        x.beginPath(); x.arc(cx + Math.cos(p.a) * p.r, cy + Math.sin(p.a) * p.r * 0.7, p.s, 0, 6.29); x.fill(); });
+      raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [dust]);
+  return <canvas ref={ref} width={320} height={180} className="fx-blackhole" />;
+};
+export default BlackHole;

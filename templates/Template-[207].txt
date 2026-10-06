@@ -1,0 +1,12 @@
+'use client';
+import { useEffect, useState } from 'react';
+import './BreadcrumbSlide.css';
+const BreadcrumbSlide = ({ trail = ['home', 'projects', 'aetherion', 'mcp'] }) => {
+  const [n, setN] = useState(1);
+  useEffect(() => { const iv = setInterval(() => setN(v => (v % (trail.length + 1)) + 1), 1200);
+    return () => clearInterval(iv); }, [trail.length]);
+  const show = trail.slice(0, Math.min(n, trail.length));
+  return <div className="crumbs">{show.map((t, i) => (
+    <span key={i} className="crumbs-c">{i > 0 && <em>/</em>}<b className={i === show.length - 1 ? 'now' : ''}>{t}</b></span>))}</div>;
+};
+export default BreadcrumbSlide;
