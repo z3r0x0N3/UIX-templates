@@ -226,11 +226,29 @@
     font-size:22px; font-weight:800; white-space:nowrap; }
   .fm-img { width:90px; height:52px; border-radius:8px; background:#120F17 center/cover; flex:none; }
 
+  /* ── 36 GlassIcons ── */
+  .gi-btns { display:flex; gap:16px; flex-wrap:wrap; }
+  .gi-btn { position:relative; width:76px; height:76px; border:none; background:none; cursor:pointer; padding:0; }
+  .gi-btn__back { position:absolute; inset:0; border-radius:20px; }
+  .gi-btn__front { position:absolute; inset:3px; border-radius:17px; background:rgba(255,255,255,.12);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.28); border-top-color:rgba(255,255,255,.5);
+    display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden;
+    transition:transform .25s cubic-bezier(.2,1.4,.4,1); }
+  .gi-btn:hover .gi-btn__front { transform:translateY(-4px) scale(1.05); }
+  .gi-btn:active .gi-btn__front { transform:translateY(-1px) scale(.98); }
+  .gi-btn__front::after { content:''; position:absolute; top:-60%; left:-30%; width:45%; height:220%;
+    background:linear-gradient(105deg, transparent, rgba(255,255,255,.45), transparent);
+    transform:rotate(8deg) translateX(-120%); transition:transform .6s ease; }
+  .gi-btn:hover .gi-btn__front::after { transform:rotate(8deg) translateX(480%); }
+  .gi-btn__label { position:absolute; top:calc(100% + 6px); left:0; right:0; text-align:center;
+    font-size:11px; color:#8a97a8; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 32 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 33 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -342,6 +360,9 @@
 
 <section class="card"><h2>[35] FLOWING MENU</h2><p class="src">Template-[35].txt · FlowingMenu — hover rows: image marquee slides in from nearest edge</p>
 <div class="stage" style="width:100%"><div id="flowingmenu" style="width:100%"></div></div></section>
+
+<section class="card"><h2>[36] GLASS ICONS</h2><p class="src">Template-[36].txt · GlassIcons — gradient-backed glass buttons, hover for lift + shine sweep</p>
+<div class="stage"><div class="gi-btns" id="glassicons"></div></div></section>
 
 </div>
 <script>
@@ -2157,6 +2178,51 @@ function FlowingMenu(el, o) {
     speed: 42, textColor: '#EC4899', bgColor: '#120F17',
     marqueeBgColor: '#ffffff', marqueeTextColor: '#120F17', borderColor: '#ff00ff'
   });
+})();
+// GlassIcons core, vanilla port (full React source: templates/Template-[36].txt)
+function GlassIcons(el, o) {
+  o = Object.assign({ items: [], className: '' }, o || {});
+  const GRAD = {
+    blue: 'linear-gradient(hsl(223, 90%, 50%), hsl(208, 90%, 50%))',
+    purple: 'linear-gradient(hsl(283, 90%, 50%), hsl(268, 90%, 50%))',
+    red: 'linear-gradient(hsl(3, 90%, 50%), hsl(348, 90%, 50%))',
+    indigo: 'linear-gradient(hsl(253, 90%, 50%), hsl(238, 90%, 50%))',
+    orange: 'linear-gradient(hsl(43, 90%, 50%), hsl(28, 90%, 50%))',
+    green: 'linear-gradient(hsl(123, 90%, 40%), hsl(108, 90%, 40%))'
+  };
+  if (o.className) el.className += ' ' + o.className;
+  o.items.forEach(item => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'gi-btn' + (item.customClass ? ' ' + item.customClass : '');
+    b.setAttribute('aria-label', item.label);
+    const back = document.createElement('span');
+    back.className = 'gi-btn__back';
+    back.style.background = GRAD[item.color] || item.color;
+    const front = document.createElement('span');
+    front.className = 'gi-btn__front';
+    const icon = document.createElement('span');
+    icon.className = 'gi-btn__icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = item.icon;
+    front.appendChild(icon);
+    const label = document.createElement('span');
+    label.className = 'gi-btn__label';
+    label.textContent = item.label;
+    b.append(back, front, label);
+    if (item.onClick) b.addEventListener('click', item.onClick);
+    el.appendChild(b);
+  });
+}
+(() => { const host = document.getElementById('glassicons'); if (!host) return;
+  GlassIcons(host, { items: [
+    { icon: '🏠', label: 'Home', color: 'blue' },
+    { icon: '🔍', label: 'Search', color: 'purple' },
+    { icon: '❤', label: 'Likes', color: 'red' },
+    { icon: '⚙', label: 'Settings', color: 'indigo' },
+    { icon: '✉', label: 'Mail', color: 'orange' },
+    { icon: '✓', label: 'Done', color: 'green' }
+  ] });
 })();
 </script>
 </body>
