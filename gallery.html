@@ -179,7 +179,7 @@
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 26 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 27 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -266,6 +266,9 @@
 
 <section class="card"><h2>[29] TEXT TYPE</h2><p class="src">Template-[29].txt · TextType — typewriter with delete + loop, per-sentence colors</p>
 <div class="stage"><div class="tt" id="texttype"><span class="tt-content"></span><span class="tt-cursor">|</span></div></div></section>
+
+<section class="card"><h2>[30] MAGIC RINGS</h2><p class="src">Template-[30].txt · MagicRings — the real GLSL (WebGL2): expanding rings — move mouse, hover to grow, click for burst</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="magicrings" width="600" height="400" style="height:320px"></canvas></div></section>
 
 </div>
 <script>
@@ -1526,6 +1529,133 @@ function Stepper(el, o) {
       }
     }
   })();
+})();
+// MagicRings — the template's own GLSL running on raw WebGL2 (full source: templates/Template-[30].txt)
+(() => { const c = document.getElementById('magicrings'); if (!c) return;
+  const gl = c.getContext('webgl2', { alpha: true, premultipliedAlpha: false });
+  if (!gl) { c.parentElement.innerHTML = '<p>WebGL2 unavailable</p>'; return; }
+  const VS = '#version 300 es\nlayout(location=0) in vec2 pos;\nvoid main(){ gl_Position = vec4(pos,0.0,1.0); }';
+  const FS = `#version 300 es
+precision highp float;
+uniform float uTime, uAttenuation, uLineThickness;
+uniform float uBaseRadius, uRadiusStep, uScaleRate;
+uniform float uOpacity, uNoiseAmount, uRotation, uRingGap;
+uniform float uFadeIn, uFadeOut;
+uniform float uMouseInfluence, uHoverAmount, uHoverScale, uParallax, uBurst;
+uniform float uCoverageAlpha;
+uniform vec2 uResolution, uMouse;
+uniform vec3 uColor, uColorTwo;
+uniform int uRingCount;
+layout(location=0) out vec4 outColor;
+const float HP = 1.5707963;
+const float CYCLE = 3.45;
+float fade(float t) {
+  return t < uFadeIn ? smoothstep(0.0, uFadeIn, t) : 1.0 - smoothstep(uFadeOut, CYCLE - 0.2, t);
+}
+float ring(vec2 p, float ri, float cut, float t0, float px) {
+  float t = mod(uTime + t0, CYCLE);
+  float r = ri + t / CYCLE * uScaleRate;
+  float d = abs(length(p) - r);
+  float a = atan(abs(p.y), abs(p.x)) / HP;
+  float th = max(1.0 - a, 0.5) * px * uLineThickness;
+  float h = (1.0 - smoothstep(th, th * 1.5, d)) + 1.0;
+  d += pow(cut * a, 3.0) * r;
+  return h * exp(-uAttenuation * d) * fade(t);
+}
+void main() {
+  float px = 1.0 / min(uResolution.x, uResolution.y);
+  vec2 p = (gl_FragCoord.xy - 0.5 * uResolution.xy) * px;
+  float cr = cos(uRotation), sr = sin(uRotation);
+  p = mat2(cr, -sr, sr, cr) * p;
+  p -= uMouse * uMouseInfluence;
+  float sc = mix(1.0, uHoverScale, uHoverAmount) + uBurst * 0.3;
+  p /= sc;
+  vec3 col = vec3(0.0);
+  float coverage = 0.0;
+  float rcf = max(float(uRingCount) - 1.0, 1.0);
+  for (int i = 0; i < 10; i++) {
+    if (i >= uRingCount) break;
+    float fi = float(i);
+    vec2 pr = p - fi * uParallax * uMouse;
+    vec3 rc = mix(uColor, uColorTwo, fi / rcf);
+    float ringAmount = ring(pr, uBaseRadius + fi * uRadiusStep, pow(uRingGap, fi), i == 0 ? 0.0 : 2.95 * fi, px);
+    col = mix(col, rc, vec3(ringAmount));
+    coverage = max(coverage, ringAmount);
+  }
+  col *= 1.0 + uBurst * 2.0;
+  float n = fract(sin(dot(gl_FragCoord.xy + uTime * 100.0, vec2(12.9898, 78.233))) * 43758.5453);
+  col += (n - 0.5) * uNoiseAmount;
+  float intensity = max(col.r, max(col.g, col.b));
+  vec3 emissiveColor = intensity > 0.0001 ? clamp(col / intensity, 0.0, 1.0) : vec3(0.0);
+  vec3 outputColor = mix(emissiveColor, clamp(col, 0.0, 1.0), uCoverageAlpha);
+  float outputAlpha = mix(intensity, coverage, uCoverageAlpha);
+  outColor = vec4(outputColor, clamp(outputAlpha * uOpacity, 0.0, 1.0));
+}`;
+  function sh(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  const U = n => gl.getUniformLocation(prog, n);
+  const uTime = U('uTime'), uMouse = U('uMouse'), uHover = U('uHoverAmount'), uBurst = U('uBurst');
+  gl.uniform3f(U('uResolution'), c.width, c.height, 1);
+  gl.uniform1f(U('uAttenuation'), 23);
+  gl.uniform1f(U('uLineThickness'), 3);
+  gl.uniform1f(U('uBaseRadius'), 0.15);
+  gl.uniform1f(U('uRadiusStep'), 0.05);
+  gl.uniform1f(U('uScaleRate'), 0.16);
+  gl.uniform1f(U('uOpacity'), 0.6);
+  gl.uniform1f(U('uNoiseAmount'), 0.03);
+  gl.uniform1f(U('uRotation'), 0);
+  gl.uniform1f(U('uRingGap'), 3);
+  gl.uniform1f(U('uFadeIn'), 1.4);
+  gl.uniform1f(U('uFadeOut'), 3);
+  gl.uniform1f(U('uMouseInfluence'), 0.05);
+  gl.uniform1f(U('uHoverScale'), 1.85);
+  gl.uniform1f(U('uParallax'), 0.1);
+  gl.uniform1f(U('uCoverageAlpha'), 0);
+  gl.uniform3f(U('uColor'), 0.722, 0.0, 1.0);
+  gl.uniform3f(U('uColorTwo'), 0.0, 1.0, 0.984);
+  gl.uniform1i(U('uRingCount'), 10);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  const SPEED = 1.8;
+  let mx = 0, my = 0, sx = 0, sy = 0, hov = 0, hovT = 0, burst = 0, elapsed = 0, last = performance.now();
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect();
+    mx = (e.clientX - r.left) / r.width - 0.5;
+    my = -((e.clientY - r.top) / r.height - 0.5);
+  });
+  c.addEventListener('mouseenter', () => { hovT = 1; });
+  c.addEventListener('mouseleave', () => { hovT = 0; mx = 0; my = 0; });
+  c.addEventListener('click', () => { burst = 1; });
+  (function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    elapsed += dt * SPEED;
+    sx += (mx - sx) * 0.08; sy += (my - sy) * 0.08;
+    hov += (hovT - hov) * 0.08;
+    burst *= Math.exp(-dt * 3);
+    if (burst < 0.001) burst = 0;
+    gl.uniform1f(uTime, elapsed);
+    gl.uniform2f(uMouse, sx, sy);
+    gl.uniform1f(uHover, hov);
+    gl.uniform1f(uBurst, burst);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(frame);
+  })(last);
 })();
 </script>
 </body>

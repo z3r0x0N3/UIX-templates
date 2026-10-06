@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 26 real effects ([4]–[29]).
+Live UI animation templates — the 27 real effects ([4]–[30]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 26 effects play live, no build step:
+Open `gallery.html` in any browser — all 27 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -39,6 +39,7 @@ open gallery.html
 | 27 | `templates/Template-[27].txt` | FlipCard — spring flip, drag-spin, tilt + glare (full impl, live in gallery) | click / drag / hover |
 | 28 | `templates/Template-[28].txt` | Stepper — step indicators, slide transitions, complete state (full impl, live in gallery) | click indicators / Prev / Next |
 | 29 | `templates/Template-[29].txt` | TextType — typewriter with delete + loop, per-sentence colors (full impl, live in gallery) | auto-plays |
+| 30 | `templates/Template-[30].txt` | MagicRings — expanding ring shader (full impl, live WebGL2 in gallery) | move mouse · hover · click |
 
 ## Source
 
