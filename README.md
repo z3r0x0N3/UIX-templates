@@ -1,7 +1,7 @@
 # UIX-templates
 
-Live UI animation templates — the 14 real effects extracted from
-`AETHERION/ASSETS` (the other ~487 `Template-*` files are empty stubs).
+Live UI animation templates — the 16 real effects ([4]–[19]).
+`gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
@@ -27,7 +27,8 @@ open gallery.html
 | 15 | `templates/Template-[15].txt` | DecryptedText — scramble-to-decrypt | hover to replay |
 | 16 | `templates/Template-[16].txt` | SplitFlap — departure-board flip | auto-cycles |
 | 17 | `templates/Template-[17].txt` | TechText — dashed area reveal + specks + sweep | move mouse · drag text · click letter |
-| 18 | `templates/Template-[18].txt` | StrokeText — stroke-draw + wipe fill on hover | hover to replay |
+| 18 | `templates/Template-[18].txt` | StrokeText — staggered stroke-draw + wipe fill (working vanilla impl, live in gallery) | hover to replay |
+| 19 | `templates/Template-[19].txt` | FuzzyText — row-displacement fuzz canvas (full impl, live in gallery) | hover to intensify |
 
 ## Source
 

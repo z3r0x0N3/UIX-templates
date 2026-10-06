@@ -83,7 +83,7 @@
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 14 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 16 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -127,6 +127,12 @@
 
 <section class="card"><h2>[17] TECH TEXT</h2><p class="src">Template-[17].txt · TechText — move mouse to reveal · drag text to move · click a letter to select</p>
 <div class="stage" style="width:100%"><canvas class="fx" id="techtext" width="640" height="240" style="height:240px"></canvas></div></section>
+
+<section class="card"><h2>[18] STROKE TEXT</h2><p class="src">Template-[18].txt · StrokeText — hover to replay stroke-draw + wipe fill</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="stroketext" width="640" height="240" style="height:240px"></canvas></div></section>
+
+<section class="card"><h2>[19] FUZZY TEXT</h2><p class="src">Template-[19].txt · FuzzyText — hover the text to intensify the fuzz</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="fuzzy" width="640" height="200" style="height:auto"></canvas></div></section>
 
 </div>
 <script>
@@ -272,6 +278,97 @@ document.getElementById('dock').addEventListener('mouseleave', () =>
       x.fillStyle = 'rgba(255,255,255,' + (tw * (d < REACH ? 1 : .5)).toFixed(2) + ')';
       x.fillRect(s.x, s.y, 2, 2); });
     requestAnimationFrame(tick); }); })();
+// StrokeText core (working implementation — full source in templates/Template-[18].txt)
+function StrokeTextAnimation(canvas, o) {
+  const x = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const F = o.fontWeight + ' ' + o.fontSize + 'px ui-monospace, Menlo, monospace';
+  x.font = F;
+  const chars = [...o.text];
+  const glyphW = chars.map(ch => x.measureText(ch).width);
+  const adv = glyphW.map(w => w + o.letterSpacing);
+  const total = adv.reduce((a, b) => a + b, 0) - o.letterSpacing;
+  const k = Math.min(1, (W - 40) / total);
+  const n = chars.length;
+  const expoOut = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  const clamp01 = t => Math.max(0, Math.min(1, t));
+  const Ld = Math.max(0.4, o.drawDuration - o.stagger * (n - 1));
+  let t0 = performance.now() / 1000;
+  canvas.addEventListener('mouseenter', () => { t0 = performance.now() / 1000; });
+  function frame(now) {
+    const t = now / 1000 - t0;
+    x.fillStyle = '#0A0E14'; x.fillRect(0, 0, W, H);
+    x.save();
+    x.translate(W / 2, H / 2); x.scale(k, k); x.translate(-total / 2, 0);
+    x.font = F; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.lineCap = 'round';
+    const box = o.fontSize * 0.72;
+    let cx = 0;
+    chars.forEach((ch, li) => {
+      const d = o.reverse ? (n - 1 - li) : li;
+      const lx = cx;
+      const dp = expoOut(clamp01((t - d * o.stagger) / Ld));
+      if (ch !== ' ') {
+        if (dp > 0) {
+          x.save();
+          x.beginPath(); x.rect(lx - 2, -box, (glyphW[li] + 4) * dp, box * 2); x.clip();
+          x.strokeStyle = o.strokeColor; x.lineWidth = o.strokeWidth;
+          x.strokeText(ch, lx, 0); x.restore();
+        } else {
+          x.save(); x.globalAlpha = 0.15;
+          x.strokeStyle = o.strokeColor; x.lineWidth = 1;
+          x.strokeText(ch, lx, 0); x.restore();
+        }
+        const fp = clamp01((t - o.fillDelay - d * o.stagger * 0.5) / 0.6);
+        if (fp > 0) {
+          x.save();
+          x.beginPath(); x.rect(lx, -box, glyphW[li] * fp, box * 2); x.clip();
+          x.fillStyle = o.fillColor; x.fillText(ch, lx, 0);
+          x.fillStyle = 'rgba(255,255,255,' + (0.55 * (1 - fp) + 0.12).toFixed(2) + ')';
+          x.fillRect(lx + glyphW[li] * fp - 1.5, -box, 3, box * 2);
+          x.restore();
+        }
+      }
+      cx += adv[li];
+    });
+    x.restore();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return { replay() { t0 = performance.now() / 1000; } };
+}
+// StrokeText — staggered stroke-draw + wipe fill, hover to replay
+(() => { const c = document.getElementById('stroketext'); if (!c) return;
+  StrokeTextAnimation(c, { text: 'Draw Attention', strokeColor: '#00fff2', fillColor: '#000000',
+    strokeWidth: 4, drawDuration: 3, fillDelay: 0.45, stagger: 0.05,
+    fontSize: 118, fontWeight: 350, letterSpacing: -4, reverse: false }); })();
+// FuzzyText — row-displacement fuzz, hover intensifies
+(() => { const c = document.getElementById('fuzzy'); if (!c) return; const x = c.getContext('2d');
+  const TEXT = 'Fuzzy Text', FS = 84, FW = 900, FUZZ = 30, BASE = 0.18, HOV = 0.5;
+  const off = document.createElement('canvas'); const ox = off.getContext('2d');
+  const F = FW + ' ' + FS + 'px ui-monospace, Menlo, monospace';
+  ox.font = F;
+  const m = ox.measureText(TEXT);
+  const asc = Math.ceil(m.actualBoundingBoxAscent || FS), dsc = Math.ceil(m.actualBoundingBoxDescent || FS * 0.2);
+  const th = asc + dsc, tw = Math.ceil(ox.measureText(TEXT).width);
+  off.width = tw + 10; off.height = th;
+  ox.font = F; ox.fillStyle = '#fff'; ox.textBaseline = 'alphabetic';
+  ox.fillText(TEXT, 5, asc);
+  const HM = FUZZ + 20;
+  c.width = off.width + HM * 2; c.height = th + 16;
+  let hov = false, cur = BASE;
+  const inText = e => { const r = c.getBoundingClientRect();
+    const px = (e.clientX - r.left) * c.width / r.width, py = (e.clientY - r.top) * c.height / r.height;
+    return px >= HM && px <= HM + off.width && py >= 8 && py <= 8 + th; };
+  c.addEventListener('mousemove', e => { hov = inText(e); });
+  c.addEventListener('mouseleave', () => { hov = false; });
+  (function run() {
+    cur = hov ? HOV : BASE; // transitionDuration 0 → snap
+    x.fillStyle = '#0A0E14'; x.fillRect(0, 0, c.width, c.height);
+    for (let j = 0; j < th; j++) {
+      const dx = Math.floor(cur * (Math.random() - 0.5) * FUZZ);
+      x.drawImage(off, 0, j, off.width, 1, HM + dx, 8 + j, off.width, 1);
+    }
+    requestAnimationFrame(run); }); })();
 </script>
 </body>
 </html>

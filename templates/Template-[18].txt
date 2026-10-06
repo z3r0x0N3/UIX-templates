@@ -1,18 +1,93 @@
-import StrokeText from './StrokeText';
+// StrokeText — correct working implementation (vanilla JS + Canvas, no dependencies).
+//
+// Recreates the snippet's behavior:
+//   stroke draws each letter (staggered, expo.out), then fill wipes in.
+//   trigger="hover" replays on mouseenter; fillMode="wipe"; reverse draws R->L.
+//
+// Usage:
+//   <div data-stroketext style="width:100%;height:480px"></div>
+//   <script> /* paste everything below */ </script>
 
-<StrokeText
-  text="Draw Attention"
-  strokeColor="#00fff2"
-  fillColor="#000000"
-  strokeWidth={4}
-  drawDuration={3}
-  fillDelay={0.45}
-  stagger={0.05}
-  ease="expo.out"
-  trigger="hover"
-  fillMode="wipe"
-  fontSize={118}
-  fontWeight={350}
-  letterSpacing={-4}
-  reverse={false}
-/>
+function StrokeTextAnimation(canvas, o) {
+  const x = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const F = o.fontWeight + ' ' + o.fontSize + "px ui-monospace, Menlo, monospace";
+  x.font = F;
+  const chars = [...o.text];
+  const glyphW = chars.map(ch => x.measureText(ch).width);
+  const adv = glyphW.map(w => w + o.letterSpacing);
+  const total = adv.reduce((a, b) => a + b, 0) - o.letterSpacing;
+  const k = Math.min(1, (W - 40) / total);          // fit container, keep 118px presence
+  const n = chars.length;
+  const expoOut = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  const clamp01 = t => Math.max(0, Math.min(1, t));
+  const Ld = Math.max(0.4, o.drawDuration - o.stagger * (n - 1)); // per-letter draw time
+  let t0 = performance.now() / 1000;
+  canvas.addEventListener('mouseenter', () => { t0 = performance.now() / 1000; });
+
+  function frame(now) {
+    const t = now / 1000 - t0;
+    x.fillStyle = '#0A0E14'; x.fillRect(0, 0, W, H);
+    x.save();
+    x.translate(W / 2, H / 2); x.scale(k, k); x.translate(-total / 2, 0);
+    x.font = F; x.textBaseline = 'middle'; x.lineJoin = 'round'; x.lineCap = 'round';
+    const box = o.fontSize * 0.72;
+    let cx = 0;
+    chars.forEach((ch, li) => {
+      const d = o.reverse ? (n - 1 - li) : li;      // draw order position
+      const lx = cx;
+      // 1. stroke draw (clipped reveal = drawing effect)
+      const dp = expoOut(clamp01((t - d * o.stagger) / Ld));
+      if (dp > 0 && ch !== ' ') {
+        x.save();
+        x.beginPath(); x.rect(lx - 2, -box, (glyphW[li] + 4) * dp, box * 2); x.clip();
+        x.strokeStyle = o.strokeColor; x.lineWidth = o.strokeWidth;
+        x.strokeText(ch, lx, 0);
+        x.restore();
+      } else if (ch !== ' ') {
+        x.save(); x.globalAlpha = 0.15;             // faint guide before draw
+        x.strokeStyle = o.strokeColor; x.lineWidth = 1;
+        x.strokeText(ch, lx, 0); x.restore();
+      }
+      // 2. fill wipe (fillMode="wipe") after fillDelay
+      const fp = clamp01((t - o.fillDelay - d * o.stagger * 0.5) / 0.6);
+      if (fp > 0 && ch !== ' ') {
+        x.save();
+        x.beginPath(); x.rect(lx, -box, glyphW[li] * fp, box * 2); x.clip();
+        x.fillStyle = o.fillColor; x.fillText(ch, lx, 0);
+        x.fillStyle = 'rgba(255,255,255,' + (0.55 * (1 - fp) + 0.12).toFixed(2) + ')';
+        x.fillRect(lx + glyphW[li] * fp - 1.5, -box, 3, box * 2); // wipe sheen front
+        x.restore();
+      }
+      cx += adv[li];
+    });
+    x.restore();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return { replay() { t0 = performance.now() / 1000; } };
+}
+
+// Defaults match the snippet's props exactly.
+function mountStrokeText(el, opts) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 960; canvas.height = 480;
+  canvas.style.width = '100%'; canvas.style.height = '100%';
+  el.appendChild(canvas);
+  return StrokeTextAnimation(canvas, Object.assign({
+    text: 'Draw Attention',
+    strokeColor: '#00fff2',
+    fillColor: '#000000',
+    strokeWidth: 4,
+    drawDuration: 3,
+    fillDelay: 0.45,
+    stagger: 0.05,
+    fillMode: 'wipe',
+    fontSize: 118,
+    fontWeight: 350,
+    letterSpacing: -4,
+    reverse: false
+  }, opts || {}));
+}
+
+document.querySelectorAll('[data-stroketext]').forEach(el => mountStrokeText(el));
