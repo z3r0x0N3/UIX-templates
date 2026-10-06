@@ -1,0 +1,106 @@
+<!-- StatusMark — correct working implementation (vanilla + SVG, no dependencies).
+     Props: status ('running'|'done'|'error'), progress 0..1, label,
+     color, doneColor, errorColor, size, strokeWidth, dashes,
+     fontSize, spinDuration (ms), arcLength (0..1 of circumference),
+     drawDuration (ms, check/cross draw-in), fillOpacity,
+     strike (strike-through label when done), strikeDelay (ms),
+     indeterminate (spin without progress).
+     Usage:
+       <div data-statusmark></div>
+       <script> /* paste everything below */ </script> -->
+<style>
+  .sm { display: inline-flex; align-items: center; gap: 10px; }
+  .sm .sm-label { white-space: nowrap; }
+  .sm .spin { animation: sm-spin var(--sm-spin, 1100ms) linear infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes sm-spin { to { transform: rotate(360deg); } }
+  .sm .draw { transition: stroke-dashoffset var(--sm-draw, 240ms) ease-out; }
+</style>
+<script>
+  function StatusMark(el, o) {
+    o = Object.assign({ status: 'running', progress: 0, label: '', color: '#f5f5f5',
+      doneColor: '#22c55e', errorColor: '#ef4444', size: 28, strokeWidth: 2, dashes: 8,
+      fontSize: 16, spinDuration: 1100, arcLength: 0.68, drawDuration: 240,
+      fillOpacity: 0.06, strike: false, strikeDelay: 60, indeterminate: false }, o || {});
+    const NS = 'http://www.w3.org/2000/svg';
+    const S = o.size, R = S / 2 - o.strokeWidth - 1, C = 2 * Math.PI * R;
+    const stateColor = o.status === 'done' ? o.doneColor : o.status === 'error' ? o.errorColor : o.color;
+    el.classList.add('sm');
+
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', S); svg.setAttribute('height', S);
+    const mk = (tag, attrs) => {
+      const n = document.createElementNS(NS, tag);
+      for (const k in attrs) n.setAttribute(k, attrs[k]);
+      return n;
+    };
+    // faint fill disc
+    svg.appendChild(mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: o.color, 'fill-opacity': o.fillOpacity }));
+    // dashed orbit ring (spins while running / indeterminate)
+    const seg = C / o.dashes * 0.62, gap = C / o.dashes * 0.38;
+    const ring = mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: 'none',
+      stroke: stateColor, 'stroke-width': o.strokeWidth * 0.7,
+      'stroke-dasharray': seg.toFixed(1) + ' ' + gap.toFixed(1), opacity: 0.55 });
+    if (o.status === 'running' || o.indeterminate) {
+      const g = mk('g', { class: 'spin' });
+      g.style.setProperty('--sm-spin', o.spinDuration + 'ms');
+      g.appendChild(ring); svg.appendChild(g);
+    } else svg.appendChild(ring);
+    // determinate progress arc
+    if (o.status === 'running' && !o.indeterminate && o.progress > 0) {
+      svg.appendChild(mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: 'none',
+        stroke: o.color, 'stroke-width': o.strokeWidth, 'stroke-linecap': 'round',
+        pathLength: 100, 'stroke-dasharray': (o.progress * 100) + ' 100',
+        transform: 'rotate(-90 ' + S / 2 + ' ' + S / 2 + ')' }));
+    }
+    // spinning comet arc (arcLength of circumference)
+    if (o.status === 'running' || o.indeterminate) {
+      const g = mk('g', { class: 'spin' });
+      g.style.setProperty('--sm-spin', o.spinDuration + 'ms');
+      g.appendChild(mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: 'none',
+        stroke: o.status === 'done' ? o.doneColor : stateColor, 'stroke-width': o.strokeWidth,
+        'stroke-linecap': 'round', pathLength: 100,
+        'stroke-dasharray': (o.arcLength * 100) + ' 100',
+        transform: 'rotate(-90 ' + S / 2 + ' ' + S / 2 + ')' }));
+      svg.appendChild(g);
+    }
+    // state glyph, drawn in over drawDuration
+    function drawIn(pathD, color) {
+      const p = mk('path', { d: pathD, fill: 'none', stroke: color,
+        'stroke-width': o.strokeWidth, 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
+        class: 'draw' });
+      p.style.setProperty('--sm-draw', o.drawDuration + 'ms');
+      svg.appendChild(p);
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = '0'; }));
+    }
+    const u = S / 28; // glyph units scale with size
+    if (o.status === 'done') drawIn('M ' + (9 * u) + ' ' + (15 * u) + ' L ' + (13 * u) + ' ' + (19 * u) + ' L ' + (20 * u) + ' ' + (10 * u), o.doneColor);
+    if (o.status === 'error') {
+      drawIn('M ' + (10 * u) + ' ' + (10 * u) + ' L ' + (18 * u) + ' ' + (18 * u), o.errorColor);
+      drawIn('M ' + (18 * u) + ' ' + (10 * u) + ' L ' + (10 * u) + ' ' + (18 * u), o.errorColor);
+    }
+    el.appendChild(svg);
+    if (o.label) {
+      const lab = document.createElement('span');
+      lab.className = 'sm-label';
+      lab.style.fontSize = o.fontSize + 'px';
+      lab.style.color = o.color;
+      lab.textContent = o.label;
+      el.appendChild(lab);
+      if (o.strike && o.status === 'done') {
+        setTimeout(() => { lab.style.textDecoration = 'line-through'; }, o.strikeDelay);
+      }
+    }
+  }
+
+  // Defaults match the snippet's first usage exactly.
+  document.querySelectorAll('[data-statusmark]').forEach(el => StatusMark(el, {
+    status: 'running', progress: 0.62, label: 'Draft supplier emails',
+    color: '#f5f5f5', doneColor: '#22c55e', errorColor: '#ef4444',
+    size: 28, strokeWidth: 2, dashes: 8, fontSize: 16, spinDuration: 1100,
+    arcLength: 0.68, drawDuration: 240, fillOpacity: 0.06,
+    strike: true, strikeDelay: 60
+  }));
+</script>

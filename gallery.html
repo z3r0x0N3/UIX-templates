@@ -95,11 +95,18 @@
   .bm .row.active { background:rgba(255,255,255,.10); }
   .bm .chev { display:inline-block; transition:transform .3s; font-size:.8em; }
 
+  /* ── 22 StatusMark ── */
+  .sm { display:inline-flex; align-items:center; gap:10px; }
+  .sm .sm-label { white-space:nowrap; }
+  .sm .spin { animation:sm-spin var(--sm-spin,1100ms) linear infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes sm-spin { to { transform:rotate(360deg); } }
+  .sm .draw { transition:stroke-dashoffset var(--sm-draw,240ms) ease-out; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 18 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 19 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -155,6 +162,9 @@
 
 <section class="card"><h2>[21] BRANCHED MENU</h2><p class="src">Template-[21].txt · BranchedMenu — click groups to unfold/fold the branch lines</p>
 <div class="stage" style="gap:12px"><div data-branchedmenu></div><div id="bm-status" style="font-size:12px;color:#8a97a8;align-self:flex-start">selected: quick</div></div></section>
+
+<section class="card"><h2>[22] STATUS MARK</h2><p class="src">Template-[22].txt · StatusMark — running ring, draw-on states, strike label</p>
+<div class="stage"><div id="statusmarks" style="display:flex;gap:26px;align-items:center;flex-wrap:wrap"></div></div></section>
 
 </div>
 <script>
@@ -543,6 +553,88 @@ document.querySelectorAll('[data-branchedmenu]').forEach(el => BranchedMenu(el, 
   width: 240, rowHeight: 36, indent: 40, trunk: 14, radius: 10,
   lineWidth: 1.5, fontSize: 14, drawDuration: 400, foldDuration: 300
 }));
+// StatusMark core (working implementation — full source in templates/Template-[22].txt)
+function StatusMark(el, o) {
+  o = Object.assign({ status: 'running', progress: 0, label: '', color: '#f5f5f5',
+    doneColor: '#22c55e', errorColor: '#ef4444', size: 28, strokeWidth: 2, dashes: 8,
+    fontSize: 16, spinDuration: 1100, arcLength: 0.68, drawDuration: 240,
+    fillOpacity: 0.06, strike: false, strikeDelay: 60, indeterminate: false }, o || {});
+  const NS = 'http://www.w3.org/2000/svg';
+  const S = o.size, R = S / 2 - o.strokeWidth - 1, C = 2 * Math.PI * R;
+  const stateColor = o.status === 'done' ? o.doneColor : o.status === 'error' ? o.errorColor : o.color;
+  el.classList.add('sm');
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width', S); svg.setAttribute('height', S);
+  const mk = (tag, attrs) => {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  };
+  svg.appendChild(mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: o.color, 'fill-opacity': o.fillOpacity }));
+  const seg = C / o.dashes * 0.62, gap = C / o.dashes * 0.38;
+  const ring = mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: 'none',
+    stroke: stateColor, 'stroke-width': o.strokeWidth * 0.7,
+    'stroke-dasharray': seg.toFixed(1) + ' ' + gap.toFixed(1), opacity: 0.55 });
+  if (o.status === 'running' || o.indeterminate) {
+    const g = mk('g', { class: 'spin' });
+    g.style.setProperty('--sm-spin', o.spinDuration + 'ms');
+    g.appendChild(ring); svg.appendChild(g);
+  } else svg.appendChild(ring);
+  if (o.status === 'running' && !o.indeterminate && o.progress > 0) {
+    svg.appendChild(mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: 'none',
+      stroke: o.color, 'stroke-width': o.strokeWidth, 'stroke-linecap': 'round',
+      pathLength: 100, 'stroke-dasharray': (o.progress * 100) + ' 100',
+      transform: 'rotate(-90 ' + S / 2 + ' ' + S / 2 + ')' }));
+  }
+  if (o.status === 'running' || o.indeterminate) {
+    const g = mk('g', { class: 'spin' });
+    g.style.setProperty('--sm-spin', o.spinDuration + 'ms');
+    g.appendChild(mk('circle', { cx: S / 2, cy: S / 2, r: R, fill: 'none',
+      stroke: o.status === 'done' ? o.doneColor : stateColor, 'stroke-width': o.strokeWidth,
+      'stroke-linecap': 'round', pathLength: 100,
+      'stroke-dasharray': (o.arcLength * 100) + ' 100',
+      transform: 'rotate(-90 ' + S / 2 + ' ' + S / 2 + ')' }));
+    svg.appendChild(g);
+  }
+  function drawIn(pathD, color) {
+    const p = mk('path', { d: pathD, fill: 'none', stroke: color,
+      'stroke-width': o.strokeWidth, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'draw' });
+    p.style.setProperty('--sm-draw', o.drawDuration + 'ms');
+    svg.appendChild(p);
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = '0'; }));
+  }
+  const u = S / 28;
+  if (o.status === 'done') drawIn('M ' + (9 * u) + ' ' + (15 * u) + ' L ' + (13 * u) + ' ' + (19 * u) + ' L ' + (20 * u) + ' ' + (10 * u), o.doneColor);
+  if (o.status === 'error') {
+    drawIn('M ' + (10 * u) + ' ' + (10 * u) + ' L ' + (18 * u) + ' ' + (18 * u), o.errorColor);
+    drawIn('M ' + (18 * u) + ' ' + (10 * u) + ' L ' + (10 * u) + ' ' + (18 * u), o.errorColor);
+  }
+  el.appendChild(svg);
+  if (o.label) {
+    const lab = document.createElement('span');
+    lab.className = 'sm-label';
+    lab.style.fontSize = o.fontSize + 'px';
+    lab.style.color = o.color;
+    lab.textContent = o.label;
+    el.appendChild(lab);
+    if (o.strike && o.status === 'done') {
+      setTimeout(() => { lab.style.textDecoration = 'line-through'; }, o.strikeDelay);
+    }
+  }
+}
+(() => { const host = document.getElementById('statusmarks'); if (!host) return;
+  const base = { color: '#f5f5f5', doneColor: '#22c55e', errorColor: '#ef4444' };
+  const demos = [
+    Object.assign({ status: 'running', progress: 0.62, label: 'Draft supplier emails', size: 28, fontSize: 16, strike: true }, base),
+    Object.assign({ status: 'done', label: 'Deployed', size: 28, fontSize: 16, strike: true }, base),
+    Object.assign({ status: 'error', label: 'Upload failed', size: 28, fontSize: 16 }, base),
+    Object.assign({ status: 'done', size: 16, indeterminate: true }, base)
+  ];
+  demos.forEach(d => { const w = document.createElement('div'); host.appendChild(w); StatusMark(w, d); });
+})();
 </script>
 </body>
 </html>
