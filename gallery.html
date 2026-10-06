@@ -175,11 +175,19 @@
   .tt-cursor { color:#00F0FF; animation:tt-blink .5s steps(2) infinite; }
   @keyframes tt-blink { 50%{opacity:0} }
 
+  /* ── 31 OrbitImages ── */
+  .orbit-container { position:relative; width:100%; aspect-ratio:1/1; overflow:hidden; }
+  .orbit-scaling { position:absolute; left:50%; top:50%; width:1400px; height:1400px; }
+  .orbit-rot { position:absolute; inset:0; }
+  .orbit-item { position:absolute; left:0; top:0; border-radius:50%; overflow:hidden; background:#1a2230; }
+  .orbit-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .orbit-path-svg { position:absolute; inset:0; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 27 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 28 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -269,6 +277,9 @@
 
 <section class="card"><h2>[30] MAGIC RINGS</h2><p class="src">Template-[30].txt · MagicRings — the real GLSL (WebGL2): expanding rings — move mouse, hover to grow, click for burst</p>
 <div class="stage" style="width:100%"><canvas class="fx" id="magicrings" width="600" height="400" style="height:320px"></canvas></div></section>
+
+<section class="card"><h2>[31] ORBIT IMAGES</h2><p class="src">Template-[31].txt · OrbitImages by Dominik Koch — grayscale images orbiting a circular path</p>
+<div class="stage" style="width:100%"><div id="orbit" style="width:100%;max-width:440px"></div></div></section>
 
 </div>
 <script>
@@ -1656,6 +1667,89 @@ void main() {
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     requestAnimationFrame(frame);
   })(last);
+})();
+// OrbitImages core, vanilla port (full React source: templates/Template-[31].txt)
+function OrbitImages(el, o) {
+  o = Object.assign({ images: [], shape: 'circle', baseWidth: 1400, radiusX: 700, radiusY: 170,
+    radius: 300, rotation: 0, duration: 40, itemSize: 64, direction: 'normal',
+    fill: true, showPath: false, pathColor: 'rgba(255,255,255,0.15)', pathWidth: 2,
+    paused: false }, o || {});
+  const BW = o.baseWidth, cx = BW / 2, cy = BW / 2;
+  const gen = {
+    circle: () => 'M ' + (cx - o.radius) + ' ' + cy + ' A ' + o.radius + ' ' + o.radius + ' 0 1 0 ' + (cx + o.radius) + ' ' + cy
+      + ' A ' + o.radius + ' ' + o.radius + ' 0 1 0 ' + (cx - o.radius) + ' ' + cy,
+    ellipse: () => 'M ' + (cx - o.radiusX) + ' ' + cy + ' A ' + o.radiusX + ' ' + o.radiusY + ' 0 1 0 ' + (cx + o.radiusX) + ' ' + cy
+      + ' A ' + o.radiusX + ' ' + o.radiusY + ' 0 1 0 ' + (cx - o.radiusX) + ' ' + cy,
+    square: () => { const h = o.radius; return 'M ' + (cx - h) + ' ' + (cy - h) + ' L ' + (cx + h) + ' ' + (cy - h)
+      + ' L ' + (cx + h) + ' ' + (cy + h) + ' L ' + (cx - h) + ' ' + (cy + h) + ' Z'; },
+    rectangle: () => { const hw = o.radiusX, hh = o.radiusY; return 'M ' + (cx - hw) + ' ' + (cy - hh) + ' L ' + (cx + hw) + ' ' + (cy - hh)
+      + ' L ' + (cx + hw) + ' ' + (cy + hh) + ' L ' + (cx - hw) + ' ' + (cy + hh) + ' Z'; },
+    triangle: () => { const hh = (o.radius * 2 * Math.sqrt(3)) / 2, hs = o.radius;
+      return 'M ' + cx + ' ' + (cy - hh / 1.5) + ' L ' + (cx + hs) + ' ' + (cy + hh / 3) + ' L ' + (cx - hs) + ' ' + (cy + hh / 3) + ' Z'; }
+  };
+  const d = (gen[o.shape] || gen.ellipse)();
+  el.classList.add('orbit-container');
+  const scaling = document.createElement('div');
+  scaling.className = 'orbit-scaling';
+  const rot = document.createElement('div');
+  rot.className = 'orbit-rot';
+  rot.style.transform = 'rotate(' + o.rotation + 'deg)';
+  if (o.showPath) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + BW + ' ' + BW);
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    svg.classList.add('orbit-path-svg');
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('fill', 'none');
+    p.setAttribute('stroke', o.pathColor);
+    p.setAttribute('stroke-width', o.pathWidth);
+    svg.appendChild(p);
+    rot.appendChild(svg);
+  }
+  const items = o.images.map((src, i) => {
+    const it = document.createElement('div');
+    it.className = 'orbit-item';
+    it.style.width = it.style.height = o.itemSize + 'px';
+    it.style.offsetPath = 'path("' + d + '")';
+    it.style.offsetRotate = '0deg';
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Orbiting image ' + (i + 1);
+    img.draggable = false;
+    img.onerror = () => img.remove();
+    it.appendChild(img);
+    rot.appendChild(it);
+    return it;
+  });
+  scaling.appendChild(rot);
+  el.appendChild(scaling);
+  function fit() {
+    scaling.style.transform = 'translate(-50%,-50%) scale(' + (el.clientWidth / BW) + ')';
+  }
+  new ResizeObserver(fit).observe(el);
+  fit();
+  const t0 = performance.now(), n = items.length;
+  (function tick(now) {
+    if (!o.paused) {
+      let p = (((now - t0) / 1000 / o.duration * 100) % 100 + 100) % 100;
+      if (o.direction === 'reverse') p = -p;
+      items.forEach((it, i) => {
+        const off = o.fill ? (i / n) * 100 : 0;
+        it.style.offsetDistance = ((((p + off) % 100) + 100) % 100) + '%';
+      });
+    }
+    requestAnimationFrame(tick);
+  })(t0);
+}
+(() => { const host = document.getElementById('orbit'); if (!host) return;
+  OrbitImages(host, {
+    images: [1, 2, 3, 4, 5, 6].map(i => 'https://picsum.photos/300/300?grayscale&random=' + i),
+    shape: 'circle', radius: 520, rotation: 0, duration: 45, itemSize: 64,
+    direction: 'normal', fill: true, showPath: true, paused: false
+  });
 })();
 </script>
 </body>
