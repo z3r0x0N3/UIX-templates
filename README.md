@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 30 real effects ([4]–[33]).
+Live UI animation templates — the 31 real effects ([4]–[34]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 30 effects play live, no build step:
+Open `gallery.html` in any browser — all 31 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -43,6 +43,7 @@ open gallery.html
 | 31 | `templates/Template-[31].txt` | OrbitImages by Dominik Koch — images on SVG path orbits (full impl, live in gallery) | auto-plays |
 | 32 | `templates/Template-[32].txt` | ElectricBorder canvas — chaos-displaced electric stroke (full impl, live in gallery; cf [11]'s gradient take) | auto-plays |
 | 33 | `templates/Template-[33].txt` | PixelCard — bloom-from-center pixels, shimmer, recede (full impl, live in gallery; cf [7]'s ambient take) | hover / focus |
+| 34 | `templates/Template-[34].txt` | AnimatedList — scroll scale-in, hover select, arrow nav (full impl, live in gallery) | scroll · hover · ↑↓ Enter |
 
 ## Source
 
