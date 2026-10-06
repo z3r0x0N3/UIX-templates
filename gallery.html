@@ -107,11 +107,35 @@
   .lglitch-wrap::after { content:''; position:absolute; inset:0; pointer-events:none;
     background:radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%); }
 
+  /* ── 26 CodeSlots ── */
+  .cs-row { position:relative; display:flex; gap:4px; outline:none; cursor:text; }
+  .cs-hide { position:absolute; inset:0; opacity:0; cursor:text; font-size:16px; }
+  .cs-slot { width:52px; height:61px; border-radius:26px; background:#7cb9c8; position:relative;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .cs-slot.active::after { content:''; position:absolute; inset:2px; border:2px solid #a500ff; border-radius:24px; pointer-events:none; }
+  .cs-row.err .cs-slot { box-shadow:0 0 0 2px #ff3b30; }
+  .cs-row.err { animation:cs-shake .3s; }
+  @keyframes cs-shake { 25%{transform:translateX(-5px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-3px)} }
+  .cs-fill { position:absolute; inset:0; background:#a500ff; border-radius:inherit; transform:scale(0);
+    transition:transform .5s cubic-bezier(.2,1.4,.4,1); }
+  .cs-slot.landed .cs-fill { transform:scale(1); }
+  .cs-digit { position:relative; color:#ff00ff; font-size:26px; font-weight:700; transform:translateY(16px); opacity:0;
+    transition:transform .5s cubic-bezier(.2,1.4,.4,1), opacity .3s; }
+  .cs-slot.landed .cs-digit { transform:none; opacity:1; }
+  .cs-slot.sunk .cs-digit { transform:translateY(30px); opacity:0; }
+  .cs-caret { position:absolute; bottom:8px; width:2px; height:22px; background:#a500ff; transition:left .15s; animation:cs-blink 1s steps(2) infinite; }
+  @keyframes cs-blink { 50%{opacity:0} }
+  .cs-wash { position:absolute; inset:0; background:#a500ff; border-radius:26px; display:flex; align-items:center; justify-content:center;
+    clip-path:inset(0 50% round 26px); transition:clip-path .3s ease; pointer-events:none; }
+  .cs-wash.open { clip-path:inset(0 0 round 26px); }
+  .cs-check path { stroke-dasharray:30; stroke-dashoffset:30; }
+  .cs-wash.open .cs-check path { transition:stroke-dashoffset .35s ease-out .28s; stroke-dashoffset:0; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 22 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 23 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -179,6 +203,16 @@
 
 <section class="card"><h2>[25] ACID SQUARES</h2><p class="src">Template-[25].txt · AcidSquares — warped acid grid, mouse-reactive + grain — move mouse over it</p>
 <div class="stage" style="width:100%"><canvas class="fx" id="acidsquares" width="640" height="320" style="height:300px"></canvas></div></section>
+
+<section class="card"><h2>[26] CODE SLOTS</h2><p class="src">Template-[26].txt · CodeSlots — click the slots and type (accepts when last digit is even)</p>
+<div class="stage" style="flex-direction:column;gap:10px">
+  <div class="cs-row" id="csrow"><input class="cs-hide" id="csinput" inputmode="numeric" autocomplete="one-time-code" aria-label="One-time code"></div>
+  <div style="display:flex;gap:12px;align-items:center;font-size:12px;color:#8a97a8">
+    <button id="csreset" style="background:#222a38;color:#C8DCEB;border:1px solid #334;border-radius:8px;padding:4px 12px">Reset</button>
+    <label><input type="checkbox" id="csmask"> mask</label>
+    <span id="csstatus">0 of 6 digits entered</span>
+  </div>
+</div></section>
 
 </div>
 <script>
@@ -983,6 +1017,133 @@ function AcidSquares(canvas, o) {
     spread: 0.3, colorShift: 0, contrast: 1, brightness: 1, opacity: 1,
     mouseInteraction: true, mouseStrength: 0.1, mouseRadius: 0.35,
     blur: 0, grain: true, grainIntensity: 0.05 }); })();
+// CodeSlots core (vanilla port — full React source in templates/Template-[26].txt)
+(() => { const row = document.getElementById('csrow'); if (!row) return;
+  const input = document.getElementById('csinput');
+  const statusEl = document.getElementById('csstatus');
+  const maskBox = document.getElementById('csmask');
+  const N = 6, PITCH = 56, CASCADE = 60;
+  const slots = [], digits = Array(N).fill('');
+  let active = 0, status = 'idle', mask = false;
+  for (let i = 0; i < N; i++) {
+    const s = document.createElement('div');
+    s.className = 'cs-slot';
+    s.innerHTML = '<span class="cs-fill"></span><span class="cs-digit"></span>';
+    row.appendChild(s); slots.push(s);
+  }
+  const caret = document.createElement('span');
+  caret.className = 'cs-caret'; caret.style.display = 'none';
+  row.appendChild(caret);
+  const wash = document.createElement('span');
+  wash.className = 'cs-wash';
+  wash.innerHTML = '<svg class="cs-check" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>';
+  row.appendChild(wash);
+  function paint() {
+    slots.forEach((s, i) => {
+      const d = s.querySelector('.cs-digit');
+      d.textContent = digits[i] ? (mask ? '•' : digits[i]) : '';
+      d.parentElement.classList.toggle('landed', !!digits[i]);
+      s.classList.toggle('active', document.activeElement === input && i === active && status !== 'success');
+    });
+    caret.style.display = (document.activeElement === input && status !== 'success') ? '' : 'none';
+    caret.style.left = (active * PITCH + 25) + 'px';
+    const n = digits.filter(Boolean).length;
+    statusEl.textContent = status === 'success' ? 'Code accepted'
+      : status === 'error' ? 'Code rejected — try again'
+      : n + ' of ' + N + ' digits entered';
+  }
+  function land(i, delay) {
+    const s = slots[i];
+    s.querySelector('.cs-fill').style.transitionDelay = delay + 'ms';
+    s.querySelector('.cs-digit').style.transitionDelay = delay + 'ms';
+  }
+  function insert(raw, from) {
+    if (status !== 'idle') return;
+    const ds = String(raw).replace(/\D/g, '');
+    if (!ds) return;
+    let i = (from === undefined ? active : from);
+    let k = 0;
+    for (const ch of ds) {
+      if (i >= N) break;
+      digits[i] = ch; land(i, (i - active) * CASCADE); i++; k++;
+    }
+    if (!k) return;
+    active = Math.min(i, N - 1);
+    paint();
+    if (digits.every(Boolean)) verify(digits.join(''));
+  }
+  function clearAt(i, stepBack) {
+    if (!digits[i]) { if (stepBack) { active = i; paint(); } return; }
+    digits[i] = '';
+    if (stepBack) active = i;
+    paint();
+  }
+  function verify(code) {
+    statusEl.textContent = 'Verifying…';
+    setTimeout(() => { (parseInt(code[5], 10) % 2 === 0 ? succeed : fail)(); }, 350);
+  }
+  function succeed() {
+    status = 'success';
+    slots.forEach((s, i) => setTimeout(() => s.classList.add('sunk'), i * 30 + 60));
+    setTimeout(() => wash.classList.add('open'), 150);
+    input.blur(); paint();
+  }
+  function fail() {
+    status = 'error';
+    row.classList.remove('err'); void row.offsetWidth; row.classList.add('err');
+    paint();
+    const filled = digits.map((c, i) => c ? i : -1).filter(i => i >= 0).reverse();
+    filled.forEach((idx, k) => setTimeout(() => {
+      const s = slots[idx];
+      s.querySelector('.cs-fill').style.transitionDelay = '0ms';
+      s.querySelector('.cs-digit').style.transitionDelay = '0ms';
+      digits[idx] = ''; paint();
+    }, k * CASCADE));
+    setTimeout(() => {
+      row.classList.remove('err');
+      status = 'idle'; active = 0; paint(); input.focus();
+    }, filled.length * CASCADE + 500);
+  }
+  function reset() {
+    status = 'idle'; active = 0;
+    digits.fill('');
+    slots.forEach(s => s.classList.remove('sunk'));
+    wash.classList.remove('open');
+    paint(); input.focus();
+  }
+  input.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (/^[0-9]$/.test(k)) { e.preventDefault(); insert(k); }
+    else if (k === 'Backspace') {
+      e.preventDefault();
+      if (digits[active]) clearAt(active);
+      else if (active > 0) clearAt(active - 1, true);
+    } else if (k === 'Delete') { e.preventDefault(); clearAt(active); }
+    else if (k === 'ArrowLeft') { e.preventDefault(); active = Math.max(0, active - 1); paint(); }
+    else if (k === 'ArrowRight') { e.preventDefault(); active = Math.min(N - 1, active + 1); paint(); }
+    else if (k === 'Home') { e.preventDefault(); active = 0; paint(); }
+    else if (k === 'End') { e.preventDefault(); active = N - 1; paint(); }
+  });
+  input.addEventListener('input', () => {
+    const v = input.value; input.value = '';
+    if (!v) return;
+    insert(v, v.length === 1 ? active : 0);
+  });
+  input.addEventListener('paste', e => {
+    e.preventDefault();
+    insert(e.clipboardData.getData('text'), 0);
+  });
+  input.addEventListener('focus', paint);
+  input.addEventListener('blur', paint);
+  row.addEventListener('mousedown', e => {
+    if (e.target === input) return;
+    e.preventDefault(); input.focus();
+  });
+  document.getElementById('csreset').addEventListener('click', reset);
+  maskBox.addEventListener('change', () => { mask = maskBox.checked; paint(); });
+  paint();
+})();
 </script>
 </body>
 </html>
