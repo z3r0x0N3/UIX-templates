@@ -213,11 +213,24 @@
   .al-top { top:0; background:linear-gradient(#0A0E14, transparent); }
   .al-bot { bottom:0; background:linear-gradient(transparent, #0A0E14); }
 
+  /* ── 35 FlowingMenu ── */
+  .fm-wrap { background:#120F17; border-radius:10px; overflow:hidden; }
+  .fm-item { position:relative; border-top:1px solid #ff00ff; overflow:hidden; }
+  .fm-item:last-child { border-bottom:1px solid #ff00ff; }
+  .fm-link { display:block; padding:14px 18px; font-size:30px; font-weight:800; color:#EC4899; text-decoration:none; }
+  .fm-marquee { position:absolute; inset:0; background:#fff; transform:translateY(101%); }
+  .fm-marquee.slide { transition:transform .6s cubic-bezier(.16,1,.3,1); }
+  .fm-innerwrap { height:100%; transition:transform .6s cubic-bezier(.16,1,.3,1); }
+  .fm-loop { display:flex; height:100%; align-items:center; will-change:transform; }
+  .fm-part { display:flex; align-items:center; gap:16px; padding:0 16px; color:#120F17;
+    font-size:22px; font-weight:800; white-space:nowrap; }
+  .fm-img { width:90px; height:52px; border-radius:8px; background:#120F17 center/cover; flex:none; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 31 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 32 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -326,6 +339,9 @@
     <span id="al-status">selected: none</span>
   </div>
 </div></section>
+
+<section class="card"><h2>[35] FLOWING MENU</h2><p class="src">Template-[35].txt · FlowingMenu — hover rows: image marquee slides in from nearest edge</p>
+<div class="stage" style="width:100%"><div id="flowingmenu" style="width:100%"></div></div></section>
 
 </div>
 <script>
@@ -2046,6 +2062,101 @@ function AnimatedList(el, o) {
   });
   document.getElementById('al-grad').addEventListener('change', e => api.setShowGradients(e.target.checked));
   document.getElementById('al-scroll').addEventListener('change', e => api.setScrollbar(e.target.checked));
+})();
+// FlowingMenu core, vanilla port (full React+GSAP source: templates/Template-[35].txt)
+function FlowingMenu(el, o) {
+  o = Object.assign({ items: [], speed: 15, textColor: '#fff', bgColor: '#120F17',
+    marqueeBgColor: '#fff', marqueeTextColor: '#120F17', borderColor: '#fff' }, o || {});
+  el.classList.add('fm-wrap');
+  el.style.backgroundColor = o.bgColor;
+  const loops = [];
+  o.items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'fm-item';
+    row.style.borderColor = o.borderColor;
+    const a = document.createElement('a');
+    a.className = 'fm-link'; a.href = item.link || '#';
+    a.textContent = item.text; a.style.color = o.textColor;
+    a.addEventListener('click', e => e.preventDefault());
+    const mq = document.createElement('div');
+    mq.className = 'fm-marquee';
+    mq.style.backgroundColor = o.marqueeBgColor;
+    const wrap = document.createElement('div');
+    wrap.className = 'fm-innerwrap';
+    const loop = document.createElement('div');
+    loop.className = 'fm-loop';
+    function part() {
+      const p = document.createElement('div');
+      p.className = 'fm-part';
+      p.style.color = o.marqueeTextColor;
+      const s = document.createElement('span');
+      s.textContent = item.text;
+      const img = document.createElement('div');
+      img.className = 'fm-img';
+      img.style.backgroundImage = 'url("' + item.image + '")';
+      p.append(s, img);
+      return p;
+    }
+    for (let i = 0; i < 4; i++) loop.appendChild(part());
+    wrap.appendChild(loop);
+    mq.appendChild(wrap);
+    row.append(a, mq);
+    el.appendChild(row);
+    // measure one part, rebuild enough copies for a seamless 2x loop
+    requestAnimationFrame(() => {
+      const pw = loop.children[0] ? loop.children[0].offsetWidth : 200;
+      const need = Math.max(4, Math.ceil(row.clientWidth * 2 / Math.max(1, pw)));
+      loop.innerHTML = '';
+      for (let i = 0; i < need; i++) loop.appendChild(part());
+      loops.push({ loop, w: loop.children[0] ? loop.children[0].offsetWidth : 200, x: 0 });
+    });
+    function edge(e) {
+      const r = row.getBoundingClientRect();
+      const dx = e.clientX - r.left - r.width / 2;
+      const t = e.clientY - r.top, b = r.top + r.height - e.clientY;
+      return (dx * dx + t * t) < (dx * dx + b * b) ? 'top' : 'bottom';
+    }
+    function show(ed) {
+      mq.classList.remove('slide'); wrap.style.transition = 'none';
+      mq.style.transform = ed === 'top' ? 'translateY(-101%)' : 'translateY(101%)';
+      wrap.style.transform = ed === 'top' ? 'translateY(101%)' : 'translateY(-101%)';
+      void mq.offsetWidth;
+      mq.classList.add('slide'); wrap.style.transition = '';
+      mq.style.transform = 'translateY(0)';
+      wrap.style.transform = 'translateY(0)';
+    }
+    function hide(ed) {
+      mq.classList.add('slide'); wrap.style.transition = '';
+      mq.style.transform = ed === 'top' ? 'translateY(-101%)' : 'translateY(101%)';
+      wrap.style.transform = ed === 'top' ? 'translateY(101%)' : 'translateY(-101%)';
+    }
+    row.addEventListener('mouseenter', e => show(edge(e)));
+    row.addEventListener('mouseleave', e => hide(edge(e)));
+  });
+  let last = performance.now();
+  (function tick(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    loops.forEach(L => {
+      if (!L.w) return;
+      L.x -= L.w / o.speed * dt; // one part-width per `speed` seconds, like GSAP
+      if (-L.x >= L.w) L.x += L.w;
+      L.loop.style.transform = 'translateX(' + L.x + 'px)';
+    });
+    requestAnimationFrame(tick);
+  })(last);
+}
+(() => { const host = document.getElementById('flowingmenu'); if (!host) return;
+  FlowingMenu(host, {
+    items: [
+      { link: '#', text: 'Mojave', image: 'https://images.unsplash.com/photo-1782977389500-dd7adad33ebe?q=80&w=600&h=400&fit=crop&sat=-100&auto=format' },
+      { link: '#', text: 'Sonoma', image: 'https://images.unsplash.com/photo-1781499455083-6ccc3beb20cd?q=80&w=600&h=400&fit=crop&sat=-100&auto=format' },
+      { link: '#', text: 'Monterey', image: 'https://images.unsplash.com/photo-1776394254711-4a0d7345269a?q=80&w=600&h=400&fit=crop&sat=-100&auto=format' },
+      { link: '#', text: 'Sequoia', image: 'https://images.unsplash.com/photo-1781242629922-6f39cc3671cd?q=80&w=600&h=400&fit=crop&sat=-100&auto=format' }
+    ],
+    speed: 42, textColor: '#EC4899', bgColor: '#120F17',
+    marqueeBgColor: '#ffffff', marqueeTextColor: '#120F17', borderColor: '#ff00ff'
+  });
 })();
 </script>
 </body>
