@@ -1,0 +1,18 @@
+import StrokeText from './StrokeText';
+
+<StrokeText
+  text="Draw Attention"
+  strokeColor="#00fff2"
+  fillColor="#000000"
+  strokeWidth={4}
+  drawDuration={3}
+  fillDelay={0.45}
+  stagger={0.05}
+  ease="expo.out"
+  trigger="hover"
+  fillMode="wipe"
+  fontSize={118}
+  fontWeight={350}
+  letterSpacing={-4}
+  reverse={false}
+/>

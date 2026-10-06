@@ -27,6 +27,7 @@ open gallery.html
 | 15 | `templates/Template-[15].txt` | DecryptedText — scramble-to-decrypt | hover to replay |
 | 16 | `templates/Template-[16].txt` | SplitFlap — departure-board flip | auto-cycles |
 | 17 | `templates/Template-[17].txt` | TechText — dashed area reveal + specks + sweep | move mouse · drag text · click letter |
+| 18 | `templates/Template-[18].txt` | StrokeText — stroke-draw + wipe fill on hover | hover to replay |
 
 ## Source
 
