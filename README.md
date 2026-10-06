@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 23 real effects ([4]–[26]).
+Live UI animation templates — the 24 real effects ([4]–[27]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 23 effects play live, no build step:
+Open `gallery.html` in any browser — all 24 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -36,6 +36,7 @@ open gallery.html
 | 24 | `templates/Template-[24].txt` | GridScan — perspective grid + ping-pong scan GLSL (full impl, live WebGL2 in gallery) | move mouse to tilt |
 | 25 | `templates/Template-[25].txt` | AcidSquares — warped acid grid, mouse + grain (working vanilla impl, live in gallery) | move mouse over it |
 | 26 | `templates/Template-[26].txt` | CodeSlots — OTP slots with cascade land, wash + check, error drain (full impl, live in gallery) | click slots and type |
+| 27 | `templates/Template-[27].txt` | FlipCard — spring flip, drag-spin, tilt + glare (full impl, live in gallery) | click / drag / hover |
 
 ## Source
 
