@@ -170,11 +170,16 @@
   .stp-done { padding:14px 4px; color:#61dca3; font-weight:700; }
   .stp-done button { margin-left:12px; background:#222a38; color:#C8DCEB; border:1px solid #334; border-radius:8px; padding:4px 12px; cursor:pointer; }
 
+  /* ── 29 TextType ── */
+  .tt { font-size:24px; font-weight:700; min-height:36px; }
+  .tt-cursor { color:#00F0FF; animation:tt-blink .5s steps(2) infinite; }
+  @keyframes tt-blink { 50%{opacity:0} }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 25 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 26 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -258,6 +263,9 @@
 
 <section class="card"><h2>[28] STEPPER</h2><p class="src">Template-[28].txt · Stepper — click indicators or use Previous / Next, try the input on step 3</p>
 <div class="stage" style="width:100%"><div style="width:100%"><div id="stepper"></div><div id="stp-status" style="font-size:12px;color:#8a97a8;margin-top:8px">step: 1</div></div></div></section>
+
+<section class="card"><h2>[29] TEXT TYPE</h2><p class="src">Template-[29].txt · TextType — typewriter with delete + loop, per-sentence colors</p>
+<div class="stage"><div class="tt" id="texttype"><span class="tt-content"></span><span class="tt-cursor">|</span></div></div></section>
 
 </div>
 <script>
@@ -1490,6 +1498,34 @@ function Stepper(el, o) {
       '<h2>Final Step</h2><p>You made it!</p>'
     ]
   });
+})();
+// TextType core (vanilla port — full React source in templates/Template-[29].txt)
+(() => { const el = document.getElementById('texttype'); if (!el) return;
+  const content = el.querySelector('.tt-content');
+  const sentences = ['Hello, React Bits!', 'Type it. Delete it.', 'Loop forever.'];
+  const colors = ['#00F0FF', '#FF9FFC', '#61dca3'];
+  const TYPE = 50, DEL = 30, PAUSE = 2000;
+  let si = 0, ci = 0, del = false;
+  (function tick() {
+    const s = sentences[si];
+    content.style.color = colors[si % colors.length];
+    if (!del) {
+      if (ci < s.length) {
+        content.textContent += s[ci++];
+        setTimeout(tick, TYPE + Math.random() * 40); // variableSpeed feel
+      } else {
+        setTimeout(() => { del = true; tick(); }, PAUSE);
+      }
+    } else {
+      if (content.textContent.length > 0) {
+        content.textContent = content.textContent.slice(0, -1);
+        setTimeout(tick, DEL);
+      } else {
+        del = false; ci = 0; si = (si + 1) % sentences.length;
+        setTimeout(tick, 300);
+      }
+    }
+  })();
 })();
 </script>
 </body>
