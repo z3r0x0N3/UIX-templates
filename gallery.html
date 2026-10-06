@@ -102,11 +102,16 @@
   @keyframes sm-spin { to { transform:rotate(360deg); } }
   .sm .draw { transition:stroke-dashoffset var(--sm-draw,240ms) ease-out; }
 
+  /* ── 23 LetterGlitch ── */
+  .lglitch-wrap { position:relative; width:100%; background:#000; border-radius:10px; overflow:hidden; }
+  .lglitch-wrap::after { content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,1) 100%); }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 19 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 20 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -165,6 +170,9 @@
 
 <section class="card"><h2>[22] STATUS MARK</h2><p class="src">Template-[22].txt · StatusMark — running ring, draw-on states, strike label</p>
 <div class="stage"><div id="statusmarks" style="display:flex;gap:26px;align-items:center;flex-wrap:wrap"></div></div></section>
+
+<section class="card"><h2>[23] LETTER GLITCH</h2><p class="src">Template-[23].txt · LetterGlitch — glyph rain with smooth color fades + vignette</p>
+<div class="stage" style="width:100%"><div class="lglitch-wrap"><canvas class="fx" id="letterglitch" width="600" height="180"></canvas></div></div></section>
 
 </div>
 <script>
@@ -634,6 +642,43 @@ function StatusMark(el, o) {
     Object.assign({ status: 'done', size: 16, indeterminate: true }, base)
   ];
   demos.forEach(d => { const w = document.createElement('div'); host.appendChild(w); StatusMark(w, d); });
+})();
+// LetterGlitch core (vanilla port — full React source in templates/Template-[23].txt)
+(() => { const c = document.getElementById('letterglitch'); if (!c) return;
+  const x = c.getContext('2d');
+  const FS = 16, CW = 10, CH = 20, SPEED = 50;
+  const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$&*()-_+=/[]{};:<>.,0123456789';
+  const COLORS = ['#2b4539', '#61dca3', '#61b3dc'];
+  const hex = h => { const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
+    return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : { r: 255, g: 255, b: 255 }; };
+  const mix = (a, b, f) => ({ r: Math.round(a.r + (b.r - a.r) * f), g: Math.round(a.g + (b.g - a.g) * f), b: Math.round(a.b + (b.b - a.b) * f) });
+  const css = o => 'rgb(' + o.r + ',' + o.g + ',' + o.b + ')';
+  const rndC = () => hex(COLORS[Math.random() * COLORS.length | 0]);
+  const rndCh = () => GLYPHS[Math.random() * GLYPHS.length | 0];
+  const cols = Math.floor(c.width / CW), rows = Math.floor(c.height / CH);
+  const L = [];
+  for (let i = 0; i < cols * rows; i++) { const r = rndC(); L.push({ ch: rndCh(), rgb: r, from: r, to: rndC(), prog: 1 }); }
+  function draw() {
+    x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height);
+    x.font = FS + 'px monospace'; x.textBaseline = 'top';
+    L.forEach((l, i) => { x.fillStyle = css(l.rgb); x.fillText(l.ch, (i % cols) * CW, Math.floor(i / cols) * CH); });
+  }
+  let last = 0;
+  (function tick(now) {
+    if (now - last >= SPEED) {
+      last = now;
+      const n = Math.max(1, Math.floor(L.length * 0.05));
+      for (let k = 0; k < n; k++) {
+        const l = L[Math.random() * L.length | 0];
+        l.ch = rndCh(); l.from = l.rgb; l.to = rndC(); l.prog = 0;
+      }
+      draw();
+    }
+    let dirty = false;
+    L.forEach(l => { if (l.prog < 1) { l.prog = Math.min(1, l.prog + 0.05); l.rgb = mix(l.from, l.to, l.prog); dirty = true; } });
+    if (dirty) draw();
+    requestAnimationFrame(tick);
+  })(0);
 })();
 </script>
 </body>
