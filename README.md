@@ -1,6 +1,6 @@
 # UIX-templates
 
-Live UI animation templates — the 17 real effects ([4]–[20]).
+Live UI animation templates — the 18 real effects ([4]–[21]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
@@ -30,6 +30,7 @@ open gallery.html
 | 18 | `templates/Template-[18].txt` | StrokeText — staggered stroke-draw + wipe fill (working vanilla impl, live in gallery) | hover to replay |
 | 19 | `templates/Template-[19].txt` | FuzzyText — row-displacement fuzz canvas (full impl, live in gallery) | hover to intensify |
 | 20 | `templates/Template-[20].txt` | GradientText — animated gradient sweep, seamless loop (working vanilla impl, live in gallery) | auto-plays |
+| 21 | `templates/Template-[21].txt` | BranchedMenu — tree menu with animated branch lines (working vanilla impl, live in gallery) | click groups / items |
 
 ## Source
 

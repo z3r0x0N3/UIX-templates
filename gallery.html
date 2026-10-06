@@ -88,11 +88,18 @@
     background-size:300% 100%; animation:gt-shift var(--gt-speed,20s) linear infinite; }
   [data-gradienttext] .gt-border > span { display:inline-block; background:#0A0E14; border-radius:11px; padding:18px 26px; }
 
+  /* ── 21 BranchedMenu ── */
+  .bm { user-select:none; }
+  .bm .row { display:flex; align-items:center; gap:8px; padding:0 10px; cursor:pointer; }
+  .bm .row:hover { background:rgba(255,255,255,.06); }
+  .bm .row.active { background:rgba(255,255,255,.10); }
+  .bm .chev { display:inline-block; transition:transform .3s; font-size:.8em; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 17 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 18 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -145,6 +152,9 @@
 
 <section class="card"><h2>[20] GRADIENT TEXT</h2><p class="src">Template-[20].txt · GradientText — animated gradient sweep (20s loop)</p>
 <div class="stage"><div data-gradienttext class="custom-class" style="font-size:34px">Add a splash of color!</div></div></section>
+
+<section class="card"><h2>[21] BRANCHED MENU</h2><p class="src">Template-[21].txt · BranchedMenu — click groups to unfold/fold the branch lines</p>
+<div class="stage" style="gap:12px"><div data-branchedmenu></div><div id="bm-status" style="font-size:12px;color:#8a97a8;align-self:flex-start">selected: quick</div></div></section>
 
 </div>
 <script>
@@ -412,6 +422,126 @@ function GradientText(el, opts) {
 document.querySelectorAll('[data-gradienttext]').forEach(el => GradientText(el, {
   colors: ['#ffc600', '#4f0097', '#000000', '#00ffa9'],
   animationSpeed: 20, showBorder: false, className: 'custom-class'
+}));
+// BranchedMenu core (working implementation — full source in templates/Template-[21].txt)
+function BranchedMenu(el, o) {
+  o = Object.assign({ items: [], defaultOpen: [], defaultActive: null, onSelect: null,
+    color: '#f5f5f5', accentColor: '#f5f5f5', lineColor: '#3f3f46', width: 240,
+    rowHeight: 36, indent: 40, trunk: 14, radius: 10, lineWidth: 1.5, fontSize: 14,
+    drawDuration: 400, foldDuration: 300 }, o || {});
+  const ICONS = { Download04Icon: '⬇', Rocket01Icon: '🚀', Settings02Icon: '⚙' };
+  const iconFor = ic => (typeof ic === 'string' && ICONS[ic]) ? ICONS[ic] : (ic || '');
+  const NS = 'http://www.w3.org/2000/svg';
+  el.classList.add('bm');
+  el.style.width = o.width + 'px';
+  el.style.fontSize = o.fontSize + 'px';
+  el.style.color = o.color;
+  const open = new Set(o.defaultOpen);
+  let active = o.defaultActive;
+  function markActive(row, on) {
+    row.classList.toggle('active', on);
+    row.style.boxShadow = on ? 'inset 2px 0 0 ' + o.accentColor : '';
+  }
+  function leafRow(item) {
+    const r = document.createElement('div');
+    r.className = 'row leaf';
+    r.style.height = o.rowHeight + 'px';
+    r.style.borderRadius = o.radius + 'px';
+    if (item.icon) { const s = document.createElement('span'); s.textContent = iconFor(item.icon); r.appendChild(s); }
+    const l = document.createElement('span'); l.textContent = item.label; r.appendChild(l);
+    markActive(r, item.value === active);
+    r.addEventListener('click', () => {
+      active = item.value;
+      el.querySelectorAll('.row').forEach(n => markActive(n, false));
+      markActive(r, true);
+      if (o.onSelect) o.onSelect(item.value, item);
+    });
+    return r;
+  }
+  function groupNode(item, gi) {
+    const n = document.createElement('div');
+    const r = document.createElement('div');
+    r.className = 'row group';
+    r.style.height = o.rowHeight + 'px';
+    r.style.borderRadius = o.radius + 'px';
+    const c = document.createElement('span'); c.className = 'chev'; c.textContent = '▸'; r.appendChild(c);
+    const l = document.createElement('span'); l.textContent = item.label; r.appendChild(l);
+    const kids = document.createElement('div');
+    kids.style.cssText = 'position:relative;padding-left:' + o.indent + 'px;overflow:hidden;' +
+      'transition:max-height ' + o.foldDuration + 'ms ease,opacity ' + o.foldDuration + 'ms;';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.style.cssText = 'position:absolute;left:' + (o.indent - o.trunk) + 'px;top:0;pointer-events:none;overflow:visible;';
+    kids.appendChild(svg);
+    (item.children || []).forEach(ch => kids.appendChild(ch.children ? groupNode(ch, gi + '/' + ch.label) : leafRow(ch)));
+    function drawWires() {
+      requestAnimationFrame(() => {
+        const krect = kids.getBoundingClientRect();
+        const pts = [];
+        [...kids.children].forEach(ch => {
+          if (ch === svg) return;
+          const row = ch.classList.contains('row') ? ch : ch.querySelector(':scope > .row');
+          if (!row) return;
+          const rr = row.getBoundingClientRect();
+          pts.push(rr.top + rr.height / 2 - krect.top);
+        });
+        svg.innerHTML = '';
+        if (!pts.length) return;
+        svg.setAttribute('width', o.trunk + 4);
+        svg.setAttribute('height', Math.max.apply(null, pts) + 2);
+        let d = 'M 2 ' + pts[0] + ' L 2 ' + pts[pts.length - 1];
+        pts.forEach(y => { d += ' M 2 ' + y + ' L ' + (2 + o.trunk) + ' ' + y; });
+        const p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', d); p.setAttribute('fill', 'none');
+        p.setAttribute('stroke', o.lineColor); p.setAttribute('stroke-width', o.lineWidth);
+        p.setAttribute('stroke-linecap', 'round');
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+        svg.appendChild(p);
+        p.getBoundingClientRect();
+        p.style.transition = 'stroke-dashoffset ' + o.drawDuration + 'ms ease';
+        p.style.strokeDashoffset = '0';
+      });
+    }
+    function setOpen(isOpen) {
+      if (isOpen) {
+        open.add(gi);
+        kids.style.display = '';
+        kids.style.maxHeight = kids.scrollHeight + 'px';
+        kids.style.opacity = '1';
+        c.style.transform = 'rotate(90deg)';
+        drawWires();
+      } else {
+        open.delete(gi);
+        kids.style.maxHeight = '0px';
+        kids.style.opacity = '0';
+        c.style.transform = '';
+        setTimeout(() => { if (!open.has(gi)) kids.style.display = 'none'; }, o.foldDuration);
+      }
+    }
+    r.addEventListener('click', () => setOpen(!open.has(gi)));
+    n.appendChild(r); n.appendChild(kids);
+    if (open.has(gi)) { c.style.transform = 'rotate(90deg)'; drawWires(); }
+    else { kids.style.display = 'none'; kids.style.maxHeight = '0px'; kids.style.opacity = '0'; }
+    return n;
+  }
+  o.items.forEach((item, i) => el.appendChild(item.children ? groupNode(item, i) : leafRow(item)));
+}
+document.querySelectorAll('[data-branchedmenu]').forEach(el => BranchedMenu(el, {
+  items: [
+    { label: 'Getting started', children: [
+      { value: 'install', label: 'Installation', icon: 'Download04Icon' },
+      { value: 'quick', label: 'Quick start', icon: 'Rocket01Icon' },
+      { value: 'config', label: 'Configuration', icon: 'Settings02Icon' } ] },
+    { label: 'Components', children: [
+      { value: 'buttons', label: 'Buttons' },
+      { value: 'overlays', label: 'Overlays' } ] }
+  ],
+  defaultOpen: [0], defaultActive: 'quick',
+  onSelect: v => { document.getElementById('bm-status').textContent = 'selected: ' + v; },
+  color: '#f5f5f5', accentColor: '#f5f5f5', lineColor: '#3f3f46',
+  width: 240, rowHeight: 36, indent: 40, trunk: 14, radius: 10,
+  lineWidth: 1.5, fontSize: 14, drawDuration: 400, foldDuration: 300
 }));
 </script>
 </body>
