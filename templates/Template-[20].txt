@@ -1,0 +1,78 @@
+<!-- GradientText — correct working implementation (vanilla, no dependencies).
+     Props: colors[] (loop should start AND end with the same color for a
+     seamless cycle), animationSpeed (seconds per loop), showBorder,
+     className.
+     Usage:
+       <div data-gradienttext class="custom-class">Add a splash of color!</div>
+       <script> /* paste everything below */ </script> -->
+<style>
+  [data-gradienttext] .gt-inner {
+    display: inline-block;
+    font-weight: 900;
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gt-shift var(--gt-speed, 20s) linear infinite;
+  }
+  @keyframes gt-shift { to { background-position: 300% 0; } }
+  [data-gradienttext] .gt-border {
+    display: inline-block;
+    padding: 3px;
+    border-radius: 14px;
+    background-size: 300% 100%;
+    animation: gt-shift var(--gt-speed, 20s) linear infinite;
+  }
+  [data-gradienttext] .gt-border > span {
+    display: inline-block;
+    background: #0A0E14;
+    border-radius: 11px;
+    padding: 18px 26px;
+  }
+</style>
+<script>
+  function GradientText(el, opts) {
+    opts = opts || {};
+    // Seamless loop: append the first color at the end when missing.
+    let colors = (opts.colors || []).slice();
+    if (colors.length > 1 && colors[0] !== colors[colors.length - 1]) {
+      colors = colors.concat(colors[0]);
+    }
+    const grad = 'linear-gradient(90deg, ' + colors.join(', ') + ')';
+    const speed = (opts.animationSpeed || 20) + 's';
+    const label = el.innerHTML;
+    el.innerHTML = '';
+    if (opts.showBorder) {
+      const b = document.createElement('span');
+      b.className = 'gt-border';
+      b.style.backgroundImage = grad;
+      b.style.setProperty('--gt-speed', speed);
+      const inner = document.createElement('span');
+      const t = document.createElement('span');
+      t.className = 'gt-inner';
+      if (opts.className) t.classList.add(opts.className);
+      t.style.backgroundImage = grad;
+      t.style.setProperty('--gt-speed', speed);
+      t.innerHTML = label;
+      inner.appendChild(t);
+      b.appendChild(inner);
+      el.appendChild(b);
+    } else {
+      const t = document.createElement('span');
+      t.className = 'gt-inner';
+      if (opts.className) t.classList.add(opts.className);
+      t.style.backgroundImage = grad;
+      t.style.setProperty('--gt-speed', speed);
+      t.innerHTML = label;
+      el.appendChild(t);
+    }
+  }
+
+  // Defaults match the snippet's props exactly.
+  document.querySelectorAll('[data-gradienttext]').forEach(el => GradientText(el, {
+    colors: ['#ffc600', '#4f0097', '#000000', '#00ffa9'],
+    animationSpeed: 20,
+    showBorder: false,
+    className: 'custom-class'
+  }));
+</script>

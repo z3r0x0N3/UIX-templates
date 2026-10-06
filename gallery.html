@@ -79,11 +79,20 @@
   .folder:hover .n2 { opacity:1; transform:translate(30px,-52px) rotate(6deg); transition-delay:.08s; }
   .folder:hover .n3 { opacity:1; transform:translate(90px,-30px) rotate(-4deg); transition-delay:.16s; }
 
+  /* ── 20 GradientText ── */
+  [data-gradienttext] .gt-inner { display:inline-block; font-weight:900; background-size:300% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:gt-shift var(--gt-speed,20s) linear infinite; }
+  @keyframes gt-shift { to { background-position:300% 0; } }
+  [data-gradienttext] .gt-border { display:inline-block; padding:3px; border-radius:14px;
+    background-size:300% 100%; animation:gt-shift var(--gt-speed,20s) linear infinite; }
+  [data-gradienttext] .gt-border > span { display:inline-block; background:#0A0E14; border-radius:11px; padding:18px 26px; }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 16 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 17 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -133,6 +142,9 @@
 
 <section class="card"><h2>[19] FUZZY TEXT</h2><p class="src">Template-[19].txt · FuzzyText — hover the text to intensify the fuzz</p>
 <div class="stage" style="width:100%"><canvas class="fx" id="fuzzy" width="640" height="200" style="height:auto"></canvas></div></section>
+
+<section class="card"><h2>[20] GRADIENT TEXT</h2><p class="src">Template-[20].txt · GradientText — animated gradient sweep (20s loop)</p>
+<div class="stage"><div data-gradienttext class="custom-class" style="font-size:34px">Add a splash of color!</div></div></section>
 
 </div>
 <script>
@@ -369,6 +381,38 @@ function StrokeTextAnimation(canvas, o) {
       x.drawImage(off, 0, j, off.width, 1, HM + dx, 8 + j, off.width, 1);
     }
     requestAnimationFrame(run); }); })();
+// GradientText core (working implementation — full source in templates/Template-[20].txt)
+function GradientText(el, opts) {
+  opts = opts || {};
+  let colors = (opts.colors || []).slice();
+  if (colors.length > 1 && colors[0] !== colors[colors.length - 1]) {
+    colors = colors.concat(colors[0]); // seamless loop
+  }
+  const grad = 'linear-gradient(90deg, ' + colors.join(', ') + ')';
+  const speed = (opts.animationSpeed || 20) + 's';
+  const label = el.innerHTML;
+  el.innerHTML = '';
+  const t = document.createElement('span');
+  t.className = 'gt-inner';
+  if (opts.className) t.classList.add(opts.className);
+  t.style.backgroundImage = grad;
+  t.style.setProperty('--gt-speed', speed);
+  t.innerHTML = label;
+  if (opts.showBorder) {
+    const b = document.createElement('span');
+    b.className = 'gt-border';
+    b.style.backgroundImage = grad;
+    b.style.setProperty('--gt-speed', speed);
+    const inner = document.createElement('span');
+    inner.appendChild(t); b.appendChild(inner); el.appendChild(b);
+  } else {
+    el.appendChild(t);
+  }
+}
+document.querySelectorAll('[data-gradienttext]').forEach(el => GradientText(el, {
+  colors: ['#ffc600', '#4f0097', '#000000', '#00ffa9'],
+  animationSpeed: 20, showBorder: false, className: 'custom-class'
+}));
 </script>
 </body>
 </html>
