@@ -1,6 +1,6 @@
 # UIX-templates
 
-Live UI animation templates — the 21 real effects ([4]–[24]).
+Live UI animation templates — the 22 real effects ([4]–[25]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
