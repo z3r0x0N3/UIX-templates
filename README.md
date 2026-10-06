@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 33 real effects ([4]–[36]).
+Live UI animation templates — the 34 real effects ([4]–[37]).
 `gallery.html` renders every one live with dependency-free vanilla code.
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 33 effects play live, no build step:
+Open `gallery.html` in any browser — all 34 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -46,6 +46,7 @@ open gallery.html
 | 34 | `templates/Template-[34].txt` | AnimatedList — scroll scale-in, hover select, arrow nav (full impl, live in gallery) | scroll · hover · ↑↓ Enter |
 | 35 | `templates/Template-[35].txt` | FlowingMenu — edge-aware image marquee rows (full impl, live in gallery) | hover rows |
 | 36 | `templates/Template-[36].txt` | GlassIcons — gradient glass buttons, lift + shine (full impl, live in gallery) | hover buttons |
+| 37 | `templates/Template-[37].txt` | Carousel — spring drag, 3D tilt, autoplay loop (full impl, live in gallery) | drag · dots |
 
 ## Source
 

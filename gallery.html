@@ -244,11 +244,25 @@
   .gi-btn__label { position:absolute; top:calc(100% + 6px); left:0; right:0; text-align:center;
     font-size:11px; color:#8a97a8; }
 
+  /* ── 37 Carousel ── */
+  .cr { width:300px; overflow:hidden; }
+  .cr-track { display:flex; gap:16px; cursor:grab; touch-action:pan-y; will-change:transform; }
+  .cr-track:active { cursor:grabbing; }
+  .cr-item { flex:none; background:#141a26; border:1px solid #2a3346; border-radius:14px;
+    padding:16px; will-change:transform; }
+  .cr-icon { font-size:26px; }
+  .cr-title { font-weight:700; margin:8px 0 4px; color:#fff; font-size:14px; }
+  .cr-desc { font-size:12px; color:#8a97a8; margin:0; }
+  .cr-dots { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+  .cr-dot { width:8px; height:8px; border-radius:50%; background:#334; border:none; padding:0; cursor:pointer;
+    transition:transform .15s, background .15s; }
+  .cr-dot.on { background:#fff; transform:scale(1.2); }
+
   canvas.fx { width:100%; height:180px; background:#000; border-radius:10px; }
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 33 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 34 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -363,6 +377,9 @@
 
 <section class="card"><h2>[36] GLASS ICONS</h2><p class="src">Template-[36].txt · GlassIcons — gradient-backed glass buttons, hover for lift + shine sweep</p>
 <div class="stage"><div class="gi-btns" id="glassicons"></div></div></section>
+
+<section class="card"><h2>[37] CAROUSEL</h2><p class="src">Template-[37].txt · Carousel — drag to spin through cards (autoplay + loop on, pause on hover)</p>
+<div class="stage"><div id="carousel"></div></div></section>
 
 </div>
 <script>
@@ -2223,6 +2240,135 @@ function GlassIcons(el, o) {
     { icon: '✉', label: 'Mail', color: 'orange' },
     { icon: '✓', label: 'Done', color: 'green' }
   ] });
+})();
+// Carousel core, vanilla port (full React+motion source: templates/Template-[37].txt)
+function Carousel(el, o) {
+  const DEFAULTS = [
+    { title: 'Text Animations', description: 'Cool text animations for your projects.', icon: '📄' },
+    { title: 'Animations', description: 'Smooth animations for your projects.', icon: '⭕' },
+    { title: 'Components', description: 'Reusable components for your projects.', icon: '🗂' },
+    { title: 'Backgrounds', description: 'Beautiful backgrounds and patterns for your projects.', icon: '🖼' },
+    { title: 'Common UI', description: 'Common UI components are coming soon!', icon: '⌨' }
+  ];
+  o = Object.assign({ items: DEFAULTS, baseWidth: 300, autoplay: false, autoplayDelay: 3000,
+    pauseOnHover: false, loop: false, round: false }, o || {});
+  const GAP = 16, VEL = 500, K = 300, C = 30;
+  const itemW = o.baseWidth - 32, off = itemW + GAP;
+  const render = o.loop && o.items.length ? [o.items[o.items.length - 1], ...o.items, o.items[0]] : o.items.slice();
+  let pos = o.loop ? 1 : 0;
+  let x = -pos * off, vel = 0, dragging = false, hover = false, jumping = false;
+  el.classList.add('cr');
+  const track = document.createElement('div');
+  track.className = 'cr-track';
+  track.style.perspective = '1000px';
+  const cells = render.map(it => {
+    const d = document.createElement('div');
+    d.className = 'cr-item' + (o.round ? ' round' : '');
+    d.style.width = itemW + 'px';
+    if (o.round) d.style.borderRadius = '50%';
+    d.innerHTML = '<div class="cr-icon">' + it.icon + '</div>'
+      + '<div class="cr-title">' + it.title + '</div>'
+      + '<p class="cr-desc">' + it.description + '</p>';
+    track.appendChild(d);
+    return d;
+  });
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'cr-dots';
+  const dots = o.items.map((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cr-dot';
+    b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    b.addEventListener('click', () => go(o.loop ? i + 1 : i));
+    dotsWrap.appendChild(b);
+    return b;
+  });
+  el.append(track, dotsWrap);
+  function active() {
+    return o.items.length === 0 ? 0
+      : o.loop ? ((pos - 1) % o.items.length + o.items.length) % o.items.length
+      : Math.min(pos, o.items.length - 1);
+  }
+  function paint() {
+    track.style.transform = 'translateX(' + x + 'px)';
+    track.style.perspectiveOrigin = (pos * off + itemW / 2) + 'px 50%';
+    cells.forEach((c, i) => {
+      const rel = (x + i * off) / off; // -1 → +90°, 0 → 0°, +1 → -90°
+      c.style.transform = 'rotateY(' + (-rel * 90).toFixed(1) + 'deg)';
+    });
+    dots.forEach((d, i) => d.classList.toggle('on', i === active()));
+  }
+  function go(n) {
+    pos = Math.max(0, Math.min(render.length - 1, n));
+    paint();
+  }
+  function settle() {
+    if (!o.loop) return;
+    if (pos === render.length - 1) {
+      jumping = true; pos = 1; x = -pos * off; vel = 0;
+      requestAnimationFrame(() => { jumping = false; });
+    } else if (pos === 0) {
+      jumping = true; pos = o.items.length; x = -pos * off; vel = 0;
+      requestAnimationFrame(() => { jumping = false; });
+    }
+  }
+  let last = performance.now();
+  (function tick(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (!dragging && !jumping) {
+      const target = -pos * off;
+      vel += (K * (target - x) - C * vel) * dt;
+      x += vel * dt;
+      if (Math.abs(target - x) < 0.05 && Math.abs(vel) < 0.5) { x = target; vel = 0; settle(); }
+      paint();
+    }
+    requestAnimationFrame(tick);
+  })(last);
+  let px = 0, downX = 0, moved = false, hist = [], dragStartX = 0;
+  track.addEventListener('pointerdown', e => {
+    dragging = true; moved = false; hist = [];
+    px = downX = e.clientX; dragStartX = x; vel = 0;
+    try { track.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  track.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const d = e.clientX - px;
+    if (!moved && Math.abs(e.clientX - downX) < 4) return;
+    moved = true;
+    x += d; px = e.clientX;
+    const now = performance.now();
+    hist.push({ t: now, v: x });
+    while (hist.length > 2 && now - hist[0].t > 90) hist.shift();
+    if (!o.loop) x = Math.max(-off * (render.length - 1), Math.min(0, x));
+    paint();
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    if (!moved) return;
+    let v = 0;
+    const a = hist[0], b = hist[hist.length - 1];
+    if (a && b && b.t > a.t) v = ((b.v - a.v) / (b.t - a.t)) * 1000;
+    const total = x - dragStartX;
+    const step = total < 0 || v < -VEL ? 1 : total > 0 || v > VEL ? -1 : 0;
+    if (step !== 0) go(pos + step);
+  }
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', () => { dragging = false; });
+  if (o.pauseOnHover) {
+    el.addEventListener('mouseenter', () => { hover = true; });
+    el.addEventListener('mouseleave', () => { hover = false; });
+  }
+  if (o.autoplay) {
+    setInterval(() => {
+      if (render.length > 1 && !(o.pauseOnHover && hover) && !dragging) go(pos + 1 > render.length - 1 ? pos : pos + 1);
+    }, o.autoplayDelay);
+  }
+  paint();
+}
+(() => { const host = document.getElementById('carousel'); if (!host) return;
+  Carousel(host, { autoplay: true, autoplayDelay: 3000, pauseOnHover: true, loop: true });
 })();
 </script>
 </body>
