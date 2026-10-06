@@ -1,11 +1,11 @@
 # UIX-templates
 
-Live UI animation templates — the 13 real effects extracted from
-`AETHERION/ASSETS` (the other ~488 `Template-*` files are empty stubs).
+Live UI animation templates — the 14 real effects extracted from
+`AETHERION/ASSETS` (the other ~487 `Template-*` files are empty stubs).
 
 ## View the animations
 
-Open `gallery.html` in any browser — all 13 effects play live, no build step:
+Open `gallery.html` in any browser — all 14 effects play live, no build step:
 
 ```bash
 open gallery.html
@@ -26,6 +26,7 @@ open gallery.html
 | 14 | `templates/Template-[14].txt` | TrueFocus — focus box sweeps words | auto-plays |
 | 15 | `templates/Template-[15].txt` | DecryptedText — scramble-to-decrypt | hover to replay |
 | 16 | `templates/Template-[16].txt` | SplitFlap — departure-board flip | auto-cycles |
+| 17 | `templates/Template-[17].txt` | TechText — dashed area reveal + specks + sweep | move mouse · drag text · click letter |
 
 ## Source
 

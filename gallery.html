@@ -83,7 +83,7 @@
 </style>
 </head>
 <body>
-<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 13 non-empty Template-* effects</small></h1>
+<h1>TEMPLATE ANIMATIONS <small>— live renders · hover / move mouse to interact · all 14 non-empty Template-* effects</small></h1>
 <div class="grid">
 
 <section class="card"><h2>[12] GLITCH TEXT</h2><p class="src">Template-[12].txt · GlitchText</p>
@@ -124,6 +124,9 @@
 
 <section class="card"><h2>[5] FOLDER FLOAT</h2><p class="src">Template-[5].txt · FolderFloat — hover the folder</p>
 <div class="stage"><div class="folder"><div class="flapF"></div><div style="position:absolute;bottom:10px;width:100%;text-align:center;font-size:12px">Design feedback · 4 notes</div><div class="note n1">Tighten spacing</div><div class="note n2">Logo feels small</div><div class="note n3">Love the hero</div></div></div></section>
+
+<section class="card"><h2>[17] TECH TEXT</h2><p class="src">Template-[17].txt · TechText — move mouse to reveal · drag text to move · click a letter to select</p>
+<div class="stage" style="width:100%"><canvas class="fx" id="techtext" width="640" height="240" style="height:240px"></canvas></div></section>
 
 </div>
 <script>
@@ -208,6 +211,67 @@ document.getElementById('dock').addEventListener('mouseleave', () =>
   place();
   b.addEventListener('mouseenter', () => { if (n < 4) { n++; b.textContent = TAUNTS[n % TAUNTS.length]; place(); } });
   b.addEventListener('click', () => { b.textContent = 'Caught! Again?'; n = 0; setTimeout(place, 760); }); })();
+// TechText — dashed-stroke area reveal + specks + sweep + labels + selection + draggable
+(() => { const c = document.getElementById('techtext'); if (!c) return; const x = c.getContext('2d');
+  const TEXT = 'React Bits', REACH = 130, SPEED = 3;
+  let mx = -999, my = -999, ox = 0, oy = 0, sel = -1, drag = null;
+  const pos = e => { const r = c.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * c.width / r.width, y: (e.clientY - r.top) * c.height / r.height }; };
+  c.addEventListener('mousemove', e => { const p = pos(e); mx = p.x; my = p.y;
+    if (drag) { ox = p.x - drag.x; oy = p.y - drag.y; } });
+  c.addEventListener('mouseleave', () => { mx = my = -999; });
+  c.addEventListener('mousedown', e => { const p = pos(e); drag = { x: p.x - ox, y: p.y - oy }; });
+  window.addEventListener('mouseup', () => { drag = null; });
+  c.addEventListener('click', () => { // selection: nearest letter to cursor
+    x.font = '600 120px ui-monospace, Menlo, monospace';
+    let best = -1, bd = 1e9, cx = 0;
+    [...TEXT].forEach((ch, i) => { const w = x.measureText(ch).width - 4; const ccx = 40 + ox + cx + w / 2;
+      const d = Math.hypot(mx - ccx, my - (120 + oy)); if (d < bd) { bd = d; best = i; } cx += w; });
+    sel = (bd < 70) ? best : -1; });
+  const SP = Array.from({ length: 33 }, () => ({ x: Math.random() * 640, y: Math.random() * 240,
+    vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6, p: Math.random() * 6 }));
+  let t = 0;
+  (function tick() { t += .016 * SPEED; x.fillStyle = '#0A0E14'; x.fillRect(0, 0, 640, 240);
+    x.font = '600 120px ui-monospace, Menlo, monospace'; x.textBaseline = 'middle';
+    try { x.letterSpacing = '-4px'; } catch (e) {}
+    // sweep line
+    const sx = ((t * 90) % 840) - 100;
+    const grad = x.createLinearGradient(sx - 60, 0, sx + 60, 0);
+    grad.addColorStop(0, 'rgba(255,255,255,0)'); grad.addColorStop(.5, 'rgba(255,255,255,.10)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = grad; x.fillRect(sx - 60, 0, 120, 240);
+    // letters: dashed stroke always, fill revealed by mouse area + sweep
+    let cx = 0; const cy = 120 + oy;
+    [...TEXT].forEach((ch, i) => {
+      if (ch === ' ') { cx += x.measureText(ch).width - 4; return; }
+      const w = x.measureText(ch).width - 4, ccx = 40 + ox + cx + w / 2;
+      const d = Math.hypot(mx - ccx, my - cy);
+      const area = Math.max(0, 1 - d / REACH);                    // reveal="area", softness 1
+      const sweep = Math.max(0, 1 - Math.abs(ccx - sx) / 90);     // sweep
+      const a = Math.min(1, .12 + area + sweep * .8);
+      x.save();
+      x.globalAlpha = Math.max(.18, a);
+      x.strokeStyle = '#ffffff'; x.lineWidth = 3; x.setLineDash([7, 2]);   // lineStyle dashed
+      x.strokeText(ch, 40 + ox + cx, cy);
+      x.setLineDash([]);
+      x.globalAlpha = a * a;
+      x.fillStyle = (i === sel) ? '#00F0FF' : '#ffffff';           // selection accent
+      x.fillText(ch, 40 + ox + cx, cy);
+      if (i === sel) { x.globalAlpha = 1; x.strokeStyle = '#00F0FF'; x.lineWidth = 1;
+        x.strokeRect(40 + ox + cx - 2, cy - 62, w + 4, 124); }
+      x.restore();
+      // labels: index tag under each letter
+      x.save(); x.globalAlpha = .45 + area * .55; x.fillStyle = '#8a97a8';
+      x.font = '10px ui-monospace, monospace'; x.textAlign = 'center';
+      x.fillText(String(i), ccx, cy + 78); x.restore();
+      x.font = '600 120px ui-monospace, Menlo, monospace';
+      cx += w; });
+    // specks: 33 drifting particles, brighter near cursor
+    SP.forEach(s => { s.x = (s.x + s.vx + 640) % 640; s.y = (s.y + s.vy + 240) % 240;
+      const d = Math.hypot(mx - s.x, my - s.y);
+      const tw = .25 + .55 * Math.abs(Math.sin(t * 2 + s.p));
+      x.fillStyle = 'rgba(255,255,255,' + (tw * (d < REACH ? 1 : .5)).toFixed(2) + ')';
+      x.fillRect(s.x, s.y, 2, 2); });
+    requestAnimationFrame(tick); }); })();
 </script>
 </body>
 </html>
